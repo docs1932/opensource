@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Network Security Note</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="description" content="Description">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link rel="icon" href="./zh-cn/assets/favicon.jpg" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/sidebar-folder.min.css" />
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    window.$docsify = {
+      el: '#app',
+      name: '【网络安全笔记】', // 网站标题
+      repo: 'docs1932/network_security', // 显示GitHub仓库链接
+      loadSidebar: true, // 是否加载侧边栏，默认为false
+      loadNavbar: true, // 导航栏
+      // loadNavbar: true,
+      themeColor: 'green', // 自定义主题颜色
+      //executeScript: true, // 是否执行页面中的脚本，默认为false
+      subMaxLevel: 4,
+      maxLevel: 3,
+      timeUpdater: {
+        text: "> 文档最后更新时间: {docsify-updated}",
+        formatUpdated: "{YYYY}-{MM}-{DD} {HH}:{mm}:{ss}",
+        whereToPlace: "top",  // "top" or "bottom", default to "bottom"
+      },
+      auto2top: true,
+      alias: {
+        '/.*/_sidebar.md': '/_sidebar.md'
+      },
+      formatUpdated: '{MM}/{DD} {HH}:{mm}',
+      // 封面, 引入 js, 同时定义 _coverpage.md
+      coverpage: true,
+      // 搜索框
+      search: {
+        paths: 'auto',
+        placeholder: '🔍 搜索',
+        noData: '😒 找不到结果',
+        // Headline depth, 1 - 6
+        depth: 6,
+        maxAge: 86400000, // 过期时间，单位毫秒，默认一天
+      },
+      // 回到顶部
+      scrollToTop: {
+        auto: true,
+        text: '🔼',
+        right: 12,
+        bottom: 52,
+        offset: 25
+      },
+      // 页面右侧 toc，右侧目录
+      toc: {
+        tocMaxLevel: 2,
+        target: "h2, h3, h4, h5, h6",
+      },
+      // 底部导航
+      pagination: {
+        previousText: "上一页",
+        nextText: "下一页",
+        crossChapter: true,
+        crossChapterText: true,
+      },
+      // 字数统计
+      count: {
+        countable: true,
+        position: "top",
+        margin: "10px",
+        float: "right",
+        fontsize: "0.9em",
+        color: "red",
+        language: "chinese",
+        localization: {
+          words: "",
+          minute: "",
+        },
+        isExpected: true,
+      },
+  }
+  </script>
+  <!-- Docsify v4 -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/ga.min.js"></script>
+
+  <!--  搜索插件-->
+  <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+
+  <!--  回到页面顶部-->
+  <script src="https://unpkg.com/docsify-scroll-to-top/dist/docsify-scroll-to-top.min.js"></script>
+  <script src="https://unpkg.com/docsify-plugin-flexible-alerts"></script>
+
+  <!--  侧边栏收缩-->
+  <script src="https://cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
+  <!-- 底部 上一页下一页 -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify-pagination@2/dist/docsify-pagination.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/external-script.min.js"></script>
+
+  <!-- 页面右侧 TOC -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify-plugin-toc@1.1.0/dist/docsify-plugin-toc.min.js"></script>
+
+  <!-- 代码高亮  https://cdn.jsdelivr.net/npm/prismjs@1/components/ -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-cmake.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-java.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-csharp.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-docker.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-powershell.min.js"></script>
+
+  <!-- 多tab支持 -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1/dist/docsify-tabs.min.js"></script>
+
+  <!-- 字数统计 -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify-count@latest/dist/countable.min.js"></script>
+
+  <!-- 代码复制 -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@2/dist/docsify-copy-code.min.js"></script>
+
+  <!-- 图片缩放 -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
+
+  <!-- 文档更新时间 -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify-updated/src/time-updater.min.js"></script>
+</body>
+</html>
