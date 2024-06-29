@@ -2,3 +2,5 @@
   - [芋道文档摘要](yudao/README.md)
 - Halo
   - [Halo文档摘要](halo/README.md)
+- MaxKB
+  - [基于 LLM 大语言模型的知识库问答系统](maxkb/README.md)

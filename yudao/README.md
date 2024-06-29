@@ -1,18 +1,91 @@
 # 芋道系统
 
-# 1.文档
+# 1.概述
+## 1.1 代码
+```
+1.单体服务端
+https://gitee.com/zhijiantianya/ruoyi-vue-pro
+2.微服务服务端
+https://gitee.com/zhijiantianya/yudao-cloud
+3.后台管理端前端
+https://gitee.com/yudaocode/yudao-ui-admin-vue3
+4.商城用户端前端
+https://gitee.com/yudaocode/yudao-mall-uniapp
 
-https://doc.iocoder.cn/intro/
+一般使用：
+单体部署：1+3+4
+微服务部署：2+3+4
+```
+
+## 1.2 文档
+```
+1.单体部署文档
+https://doc.iocoder.cn
+2.微服务部署文档
+https://cloud.iocoder.cn/
+```
+
+## 1.3 IDE 内运行
+### 1.3.1 运行服务端
+
+```
+===================== 环境准备===================== 
+1.JDK 21
+2.IDEA
+3.MySQL 8.0
+4.导入所有 SQL
+5.启动 redis
+6.放开父 pom 和 server 模块中关于各个模块的注释
+===================== SQL 修改===================== 
+DELETE
+  FROM `system_menu` 
+WHERE ((`basetbl`.`name` = 'Boot 开发文档') OR (`basetbl`.`name` = 'Cloud 开发文档')) OR (`basetbl`.`name` = '作者动态'))
+
+===================== yml文件修改===================== 
+1.[application.yaml]
+spring.profiles.active: dev
+2.[application-dev.yaml]
+spring.datasource.dynamic.datasource.master.url=改成自己的
+spring.datasource.dynamic.datasource.slave.url=改成自己的
+spring.redis.host=改成自己的
+yudao.demo=false # 关闭演示模式
 
 
+===================== IDEA 中修改启动类配置===================== 
+Edit Configurations -> 
+1.Active profiles: dev
+2.Shorten command line: JAR manifest
 
+===================== 前端项目 YUDAO-UI-ADMIN-VUE3 修改 ===================== 
+1.【.env文件】
+VITE_APP_TITLE=章鱼管理系统
+VITE_APP_DOCALERT_ENABLE=false
+2.【.env.local文件】
+VITE_APP_CAPTCHA_ENABLE=true
+3.【src/views/Home/Index.vue】
+注释掉
+<el-row class="mt-8px" :gutter="8" justify="space-between">
+</el-row> 
+4.【src/layout/components/UserInfo/src/UserInfo.vue】
+注释掉 
+common.document
+5.【src/views/Login/components/LoginForm.vue】
+注释掉
+<el-divider content-position="center">{{ t('login.otherLogin') }}</el-divider>
+到【外包咨询】之间内容
+```
+
+https://blog.csdn.net/qq_46258463/article/details/126017142 (flowable)
 
 
 # 2.部署
-
 ## 2.1 服务端部署 (假定服务器ip: 192.168.24.133)
 
 ```
+0.请先登录将要部署服务端 jar 包的服务器，安装 font
+yum install -y fontconfig
+否则，可能在访问首页时可能会报错，Fontconfig head is null, check your fonts or fonts configuration.
+
 1.放开 主 pom 和 yudao-server 下 pom 的关于 module 的注释
 pom.xml
 yudao-server/pom.xml
@@ -138,7 +211,7 @@ deploy
 
 
 
-## 2.2 部署前端 yudao-ui-admin-vue3
+## 2.2 部署管理台前端 yudao-ui-admin-vue3
 
 ```
 1.修改 .env.dev 文件
@@ -147,15 +220,124 @@ deploy
 192.168.24.56:8081
 1.2 上传路径
 VITE_UPLOAD_URL，同 1.1
-1.3 验证码的开关
-VITE_APP_CAPTCHA_ENABLE=false
+1.3 商城H5会员端域名
+VITE_MALL_H5_DOMAIN
+1.4 验证码的开关
+VITE_APP_CAPTCHA_ENABLE=true
 
 2.打包
-npm run build:dev
-会生成一个 dist 目录
+清理缓存：
+npm cache clean --force
+删除 node_modules 文件夹和 package-lock.json 文件：
+rm -rf node_modules
+rm package-lock.json
+重新安装依赖：
+npm install
+打包
+npm run build:dev (部署到 dev 环境, 会生成一个 dist 目录)或者
+npm run build:prod (部署到生产环境, 会生成一个 dist-prod 目录)
+
+
+【重要：请全文搜索并检查 VITE_BASE_URL 和 VITE_UPLOAD_URL，确保它们都指向了 nginx 的配置。】
+【重要：请全文搜索并检查 VITE_BASE_URL 和 VITE_UPLOAD_URL，确保它们都指向了 nginx 的配置。】
+【重要：请全文搜索并检查 VITE_BASE_URL 和 VITE_UPLOAD_URL，确保它们都指向了 nginx 的配置。】
+【例如：在 .env.dev 文件中，VITE_BASE_URL 和 VITE_UPLOAD_URL 不应该再是 localhost】
 
 3.将 dist 目录下的内容上传到 nginx 所在的机器(是dist下的内容，不是 dist)，比如 
 /work/projects/yudao-ui-admin-vue3
+
+4.nginx
+    server {
+        listen       37269 ssl;
+        server_name  192.168.24.56; ## 重要！！！修改成你的外网 IP/域名
+
+        ssl_certificate      /etc/letsencrypt/live/zy.com/fullchain.pem;  # ssl证书文件位置
+        ssl_certificate_key  /etc/letsencrypt/live/zy.com/privkey.pem;  # ssl证书key的位置
+        ssl_protocols TLSv1.1 TLSv1.2 SSLv2 SSLv3; # 支持的 TLS/SSL 协议
+        #数字签名
+        ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
+        ssl_prefer_server_ciphers on;
+
+        location / { ## 前端项目
+            root   /work/projects/yudao-ui-admin-vue3;
+            index  index.html index.htm;
+            try_files $uri $uri/ /index.html;
+        }
+
+        location /admin-api/ { ## 后端项目 - 管理后台
+            proxy_pass http://192.168.24.133:48080/admin-api/; ## 重要！！！proxy_pass 需要设置为后端项目所在服务器的 IP
+            # 如果是域名解析到香港 ip 且未备案, 而后端服务器是境内的，则可以注释掉本行
+            # 如果是域名解析到香港 ip 且未备案, 而后端服务器是境内的，则可以注释掉本行
+            # 如果是域名解析到香港 ip 且未备案, 而后端服务器是境内的，则可以注释掉本行
+            #proxy_set_header Host $http_host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header REMOTE-HOST $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+
+    }
+
+```
+
+
+
+## 2.3  部署用户侧前端 yudao-mall-uniapp
+
+```
+1.代码下载
+https://github.com/yudaocode/yudao-mall-uniapp
+https://gitee.com/yudaocode/yudao-mall-uniapp
+
+2.修改 .env 文件中的
+SHOPRO_BASE_URL 为你自己的域名
+
+3.修改 manifest.json：
+uni-app 应用表示(AppID) --> 点击重新获取
+
+4.打包：
+发行 -> 网站 PC Web或手机H5 
+打的包会在 yudao-mall-uniapp\unpackage\dist\build\web，
+然后 zip 所有文件及文件夹到 web.zip 文件
+
+5.将打包好的内容 web.zip 上传到 nginx 所在的机器
+/work/projects/yudao-mall-uniapp
+并解压 web.zip 
+
+6.配置 nginx
+    server {
+        listen       443 ssl;
+        server_name  192.168.24.56; ## 重要！！！修改成你的外网 IP/域名
+
+        ssl_certificate      /etc/letsencrypt/live/zy.com/fullchain.pem;  # ssl证书文件位置
+        ssl_certificate_key  /etc/letsencrypt/live/zy.com/privkey.pem;  # ssl证书key的位置
+        ssl_protocols TLSv1.1 TLSv1.2 SSLv2 SSLv3; # 支持的 TLS/SSL 协议
+        #数字签名
+        ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
+        ssl_prefer_server_ciphers on;
+
+        location / { ## 前端项目
+            root   /work/projects/yudao-mall-uniapp;
+            index  index.html index.htm;
+            try_files $uri $uri/ /index.html;
+        }
+
+        location /app-api/ { ## 后端项目 - 用户 App
+            proxy_pass http://192.168.24.133:48080/app-api/; ## 重要！！！proxy_pass 需要设置为后端项目所在服务器的 IP
+            # 如果是域名解析到香港 ip 且未备案, 而后端服务器是境内的，则可以注释掉本行
+            # 如果是域名解析到香港 ip 且未备案, 而后端服务器是境内的，则可以注释掉本行
+            # 如果是域名解析到香港 ip 且未备案, 而后端服务器是境内的，则可以注释掉本行
+            #proxy_set_header Host $http_host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header REMOTE-HOST $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+
+    }
+    
+7.重启 nginx    
+
+8.用 pad 访问即可
+https://192.168.24.56
 ```
 
 
@@ -215,6 +397,18 @@ http {
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         }
 
+    }
+
+    server {
+        listen       8082;
+        server_name  192.168.24.56; ## 重要！！！修改成你的外网 IP/域名
+
+        location / { ## 前端项目
+            root   /work/projects/yudao-mall-uniapp;
+            index  index.html index.htm;
+            try_files $uri $uri/ /index.html;
+        }
+
         location /app-api/ { ## 后端项目 - 用户 App
             proxy_pass http://192.168.24.133:48080/app-api/; ## 重要！！！proxy_pass 需要设置为后端项目所在服务器的 IP
             # 如果是域名解析到香港 ip 且未备案, 而后端服务器是境内的，则可以注释掉本行
@@ -233,13 +427,6 @@ http {
 
 
 
-# 3.微信公众平台
-
-## 3.1 微信公众平台测试账号
-
-[微信公众平台 (qq.com)](https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login)
-
-
 
 
 
@@ -251,15 +438,6 @@ http {
 localhost:80
 admin/admin123
 ```
-
-
-
-## 99.2 移动端商城代码
-
-https://gitee.com/yudaocode/yudao-mall-uniapp
-
-
-
 
 
 
