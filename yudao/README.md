@@ -73,6 +73,12 @@ common.document
 注释掉
 <el-divider content-position="center">{{ t('login.otherLogin') }}</el-divider>
 到【外包咨询】之间内容
+6.【src/views/Login/SocialLogin.vue】
+【src/views/Login/components/LoginForm.vue】
+【src/views/Login/components/MobileForm.vue】
+将有关‘芋道源码’的tenant，username,password等都改为空
+7.【src/components/DiyEditor/components/mobile/UserCard/index.vue】
+将有关‘芋道源码’都改为 章鱼
 ```
 
 https://blog.csdn.net/qq_46258463/article/details/126017142 (flowable)
@@ -282,7 +288,11 @@ npm run build:prod (部署到生产环境, 会生成一个 dist-prod 目录)
 
 
 ## 2.3  部署用户侧前端 yudao-mall-uniapp
+### 2.3.1 部署到微信小程序
 
+https://blog.csdn.net/2301_76481677/article/details/139056582
+
+### 2.3.2 部署到 PC
 ```
 1.代码下载
 https://github.com/yudaocode/yudao-mall-uniapp
@@ -295,7 +305,8 @@ SHOPRO_BASE_URL 为你自己的域名
 uni-app 应用表示(AppID) --> 点击重新获取
 
 4.打包：
-发行 -> 网站 PC Web或手机H5 
+如果没有 node_modules 文件夹，则执行 npm install 安装依赖
+然后在 HBuild 中 -> 发行 -> 网站 PC Web或手机H5 
 打的包会在 yudao-mall-uniapp\unpackage\dist\build\web，
 然后 zip 所有文件及文件夹到 web.zip 文件
 
