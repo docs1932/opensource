@@ -37,9 +37,8 @@ https://cloud.iocoder.cn/
 5.启动 redis
 6.放开父 pom 和 server 模块中关于各个模块的注释
 ===================== SQL 修改===================== 
-DELETE
-  FROM `system_menu` 
-WHERE ((`basetbl`.`name` = 'Boot 开发文档') OR (`basetbl`.`name` = 'Cloud 开发文档')) OR (`basetbl`.`name` = '作者动态'))
+DELETE FROM system_menu
+WHERE NAME IN ('作者动态','Boot 开发文档','Cloud 开发文档');
 
 ===================== yml文件修改===================== 
 1.[application.yaml]
@@ -79,6 +78,20 @@ common.document
 将有关‘芋道源码’的tenant，username,password等都改为空
 7.【src/components/DiyEditor/components/mobile/UserCard/index.vue】
 将有关‘芋道源码’都改为 章鱼
+
+99.安装并启动
+# 安装 pnpm，提升依赖的安装速度
+npm config set registry https://registry.npmmirror.com
+npm install -g pnpm
+# 安装依赖
+pnpm install
+
+# 启动服务
+npm run dev
+
+100.访问
+启动完成后，浏览器会自动打开 http://localhost:80 (opens new window)地址，可以看到前端界面
+默认的用户名密码是：admin/admin123
 ```
 
 https://blog.csdn.net/qq_46258463/article/details/126017142 (flowable)
