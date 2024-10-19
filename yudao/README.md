@@ -83,6 +83,8 @@ common.document
 将有关‘芋道源码’都改为 章鱼
 8.【index.html】
 去掉跟‘芋道’有关的内容
+9.【src/locales/zh-CN.ts】
+default.login.message 置空
 
 99.安装并启动
 # 安装 pnpm，提升依赖的安装速度
