@@ -29,7 +29,7 @@ https://cloud.iocoder.cn/
 ### 1.3.1 运行服务端
 
 ```
-===================== 环境准备===================== 
+===================== 环境准备 ===================== 
 1.JDK 21
 2.IDEA
 3.MySQL 8.0
@@ -40,7 +40,7 @@ https://cloud.iocoder.cn/
 DELETE FROM system_menu
 WHERE NAME IN ('作者动态','Boot 开发文档','Cloud 开发文档');
 
-===================== yml文件修改===================== 
+===================== yml文件修改 ===================== 
 1.[application.yaml]
 spring.profiles.active: dev
 2.[application-dev.yaml]
@@ -50,7 +50,7 @@ spring.redis.host=改成自己的
 yudao.demo=false # 关闭演示模式
 
 
-===================== IDEA 中修改启动类配置===================== 
+===================== IDEA 中修改启动类配置 ===================== 
 Edit Configurations -> 
 1.Active profiles: dev
 2.Shorten command line: JAR manifest
@@ -59,6 +59,9 @@ Edit Configurations ->
 1.【.env文件】
 VITE_APP_TITLE=章鱼管理系统
 VITE_APP_DOCALERT_ENABLE=false
+VITE_APP_DEFAULT_LOGIN_TENANT =
+VITE_APP_DEFAULT_LOGIN_USERNAME =
+VITE_APP_DEFAULT_LOGIN_PASSWORD =
 2.【.env.local文件】
 VITE_APP_CAPTCHA_ENABLE=true
 3.【src/views/Home/Index.vue】
@@ -78,6 +81,8 @@ common.document
 将有关‘芋道源码’的tenant，username,password等都改为空
 7.【src/components/DiyEditor/components/mobile/UserCard/index.vue】
 将有关‘芋道源码’都改为 章鱼
+8.【index.html】
+去掉跟‘芋道’有关的内容
 
 99.安装并启动
 # 安装 pnpm，提升依赖的安装速度
