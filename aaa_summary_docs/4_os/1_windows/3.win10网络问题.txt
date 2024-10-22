@@ -1,0 +1,15 @@
+1.在网络连接正常的情况下，部分网站可以访问，部分网站访问不了，或者说部分网站的子域名网站无法访问
+比如：在 chrome 中输入网址，提示错误是：DNS_PROBE_FINISHED_NXDOMAIN
+
+1.1 参考地址:
+https://blog.csdn.net/zhang01457/article/details/121753501
+https://blog.csdn.net/n_fly/article/details/115296356
+
+1.2 处理方法(不行就可以参考上文地址):
+控制面板 >> 网络和 Internet >> 网络连接
+>> WLAN >> 右键 >> 属性 >> Internet 协议版本 4(TCP/IPv4)
+>> 属性 >> 使用下面的 DNS 服务器地址(E):
+>> 首选 DNS 服务器：223.5.5.5
+>> 备用 DNS 服务器：223.5.5.5
+>> 确定
+此时再看下能否访问与否

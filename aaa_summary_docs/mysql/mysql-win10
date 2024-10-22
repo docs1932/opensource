@@ -1,0 +1,45 @@
+1.下载  MySQL Community Server
+https://dev.mysql.com/downloads/mysql/
+选择合适的版本， 下载 zip 包
+
+2.解压
+D:\software\software_for_develop\mysql-5.7.39-winx64
+
+3.配置环境变量
+定义 PATH
+编辑 PATH, 新增一个配置项
+D:\software\software_for_develop\mysql-5.7.39-winx64\bin
+
+4.在 D:\software\software_for_develop\mysql-5.7.39-winx64 目录下创建 my.ini 文件
+注意：用正斜杠/，不要用反斜杠，可能会出现问题
+注意：用正斜杠/，不要用反斜杠，可能会出现问题
+注意：用正斜杠/，不要用反斜杠，可能会出现问题
+[mysqld]
+port = 3306
+basedir=D:/software/software_for_develop/mysql-5.7.39-winx64
+datadir=D:/software/software_for_develop/mysql-5.7.39-winx64/data
+max_connections=200
+character-set-server=utf8
+default-storage-engine=INNODB
+sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+[mysql]
+default-character-set=utf8
+
+5.以管理员身份（避免权限不够报错）运行进入cmd命令行界面，（可以打开 powershell,选择以管理员身份运行）
+进入 D:\software\software_for_develop\mysql-5.7.39-winx64\bin 目录下
+执行 mysqld -install 命令进行安装mysql，
+报错解决办法：默认安装VC ++ 2013
+再次执行 mysqld -install 命令进行安装mysql
+(出现：Service successfully installed. 即为安装成功）
+
+6.以管理员身份（避免权限不够报错）运行进入cmd命令行界面，（可以打开 powershell,选择以管理员身份运行）
+  进入 D:\software\software_for_develop\mysql-5.7.39-winx64\bin 目录下
+执行 mysqld --initialize-insecure --user=mysql命令初始化配置，
+如果没有意外，成功后，会生成data目录并生成root用户。
+
+7. 执行 net start mysql 命令启动MySQL。
+
+8.修改 root 密码
+启动服务成功后，运行 “mysqladmin -u root -p password 123456”修改root密码，
+原密码默认为空，只需回车即可（忽略warning）
+回车之后，密码即被设置为 123456，此时可用 navicat 连接

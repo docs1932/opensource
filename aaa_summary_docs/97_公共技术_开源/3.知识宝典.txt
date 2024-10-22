@@ -1,0 +1,20 @@
+
+1.java相关所有相关详细技术栈信息
+https://pdai.tech/
+https://github.com/EbookFoundation/free-programming-books
+https://github.com/algorithm-visualizer/algorithm-visualizer
+https://github.com/codecrafters-io/build-your-own-x (造轮子)
+https://github.com/star7th/showdoc (接口文档协作)
+
+2.hacknet
+https://rutracker.org/
+
+3.远程工作网站
+https://github.com/remoteintech/remote-jobs
+
+4.AI
+https://huggingface.co/
+
+5.内网穿透
+https://www.cnblogs.com/smlile-you-me/p/15096899.html
+

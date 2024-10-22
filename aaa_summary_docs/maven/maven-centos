@@ -1,0 +1,20 @@
+0.前提: 安装了 jdk, 并配置好了 jdk 的环境变量
+
+1.下载 maven: 建议去国内镜像源下载
+https://maven.apache.org
+
+2.上传到 centos 服务器上, 如 /opt 目录
+如 /opt/apache-maven-3.8.5-bin.tar.gz
+
+3.解压: tar zxvf 安装包名 -C 解压路径
+tar zxvf apache-maven-3.8.5-bin.tar.gz -C /opt/
+
+4.设置环境变量: vi /etc/profile
+export MAVEN_HOME=/opt/apache-maven-3.8.5
+export PATH=$PATH:$MAVEN_HOME/bin
+
+5.执行以下命令刷新环境变量
+source /etc/profile
+
+6.验证是否配置成功，执行以下命令
+mvn -version

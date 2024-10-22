@@ -1,0 +1,27 @@
+#1.常见的代码管理模式
+##1.1 fork-merge 模式
+即: 代码主仓是A, 各个开发者分别基于主仓A开始fork自己的仓库, 如:forkA1, forkA2
+开发时,
+>> 先将代码push到自己的仓库forkA1,
+>> 然后从主仓A开始pull代码到本地, 再次push到自己的仓库forkA1,
+>> 进入自己的仓库forkA1, 发起 pull request 请求
+
+##1.2 分支开发模式
+即: 代码主仓是A,
+>> 每次版本开发时, 先基于主分支master/develop 拉出分支1,
+>> 然后各个人员基于分支1开发并提交代码
+>> 分支1稳定后, 可向develop分支发起 pull request 请求进行合并
+
+#2.git 分支管理
+##2.1 master 分支(长期分支)
+是所有分支的上游, 始终与prd环境最新代码保持一致.只能从其他分支合并, 不能直接修改代码.
+可基于master分支拉出develop和hotfix分支, 可接受来自develop和hotfix分支的合并请求.
+##2.2 develop 分支(长期分支)
+规划一个新的发布版本, 不能直接在此分支上修改. 可以接受来自 feature 和 hotfix 分支的合并请求.
+可以基于 develop 分支拉出 feature 或者 hotfix 分支
+##2.3 feature 分支(短期分支)
+主要用来开发一个新的功能, 一旦开发完成, 便合并回 develop 分支, 如月度版本迭代时, 每个月都可以啦一个 feature 分支.
+##2.4 hotfix 分支(短期分支)
+主要用于修复生产上的bug而拉的分支, 解决后, 再将代码合并回 develop 和 master 分支.
+
+#3.git常用命令

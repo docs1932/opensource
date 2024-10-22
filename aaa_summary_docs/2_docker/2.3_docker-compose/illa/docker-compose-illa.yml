@@ -1,0 +1,11 @@
+version: "3"
+services:
+  dozzle:
+    container_name: illa
+    image: illasoft/illa-builder:latest
+    privileged: true
+    restart: always
+    volumes:
+      - ~/.illa/:/var/opt/illa
+    ports:
+      - 8989:2022

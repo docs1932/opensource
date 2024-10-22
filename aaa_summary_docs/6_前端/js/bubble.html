@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>事件的捕获与冒泡</title>
+    <style>
+       .capture-father{
+            width: 200px;
+            height: 200px;
+            background-color: red;
+        }
+       .capture-son{
+            width: 100px;
+            height: 100px;
+            background-color: yellow;
+        }
+       .bubble-father{
+           width: 200px;
+           height: 200px;
+           background-color: green;
+       }
+       .bubble-son{
+           width: 100px;
+           height: 100px;
+           background-color: grey;
+       }
+
+
+       .bubble-mouseover-mouseout-father{
+            width: 200px;
+            height: 200px;
+            background-color: red;
+        }
+       .bubble-mouseover-mouseout-son{
+            width: 100px;
+            height: 100px;
+            background-color: yellow;
+        }
+       .nobubble-mouseenter-mouseleave-father{
+           width: 200px;
+           height: 200px;
+           background-color: green;
+       }
+       .nobubble-mouseenter-mouseleave-son{
+           width: 100px;
+           height: 100px;
+           background-color: grey;
+       }
+    </style>
+</head>
+<body>
+    <div class="capture-father">
+        <div class="capture-son">事件捕获</div>
+    </div>
+    <hr style="margin: 20px">
+    <div class="bubble-father">
+        <div class="bubble-son">事件冒泡</div>
+    </div>
+    <hr style="margin: 20px">
+    <div class="bubble-mouseover-mouseout-father">
+        <div class="bubble-mouseover-mouseout-son">mouseover-mouseout 产生冒泡</div>
+    </div>
+    <hr style="margin: 20px">
+    <div class="nobubble-mouseenter-mouseleave-father">
+        <div class="nobubble-mouseenter-mouseleave-son">mouseenter-mouseleave 没有冒泡</div>
+    </div>
+</body>
+<script>
+    // 1.事件的捕获：
+    // 同一类型的事件(如 click), 当子元素的事件触发时, 先触发父元素的同名事件, 再触发子元素的同名事件
+    const capture_father = document.querySelector('.capture-father');
+    const capture_son = document.querySelector('.capture-son');
+    /*document.addEventListener('click',function(){
+        alert('Root');
+    }, true);*/
+    capture_father.addEventListener('click',function(e){
+        alert('capture-father');
+        // 阻止冒泡/阻止捕获
+        e.stopPropagation();
+    }, true);
+    capture_son.addEventListener('click',function(){
+        alert('capture-son');
+    }, true);
+    // 2.事件的冒泡：(是默认存在的)
+    // 同一类型的事件(如 click), 当子元素的事件触发时, 先触发子元素的同名事件, 再触发父元素的同名事件
+    const bubble_father = document.querySelector('.bubble-father');
+    const bubble_son = document.querySelector('.bubble-son');
+    /*document.addEventListener('click',function(){
+        alert('Root');
+    });*/
+    bubble_father.addEventListener('click',function(){
+        alert('bubble-father');
+    });
+    bubble_son.addEventListener('click',function(e){
+        alert('bubble-son');
+        // 阻止冒泡/阻止捕获
+        e.stopPropagation();
+    });
+
+    // 3.mouseover-mouseout 产生冒泡
+    const bubble_mouseover_mouseout_father = document.querySelector('.bubble-mouseover-mouseout-father');
+    const bubble_mouseover_mouseout_son = document.querySelector('.bubble-mouseover-mouseout-son');
+    bubble_mouseover_mouseout_father.addEventListener('mouseover',function(){
+        alert('bubble father mouseover');
+    });
+    bubble_mouseover_mouseout_father.addEventListener('mouseout',function(){
+        alert('bubble father mouseout');
+    });
+    bubble_mouseover_mouseout_son.addEventListener('mouseover',function(){
+        alert('bubble son mouseover');
+    });
+    bubble_mouseover_mouseout_son.addEventListener('mouseout',function(){
+        alert('bubble son mouseout');
+    });
+
+    // 4.mouseenter-mouseleave 没有冒泡
+    const bubble_mouseenter_mouseleave_father = document.querySelector('.nobubble-mouseenter-mouseleave-father');
+    const bubble_mouseenter_mouseleave_son = document.querySelector('.nobubble-mouseenter-mouseleave-son');
+    bubble_mouseenter_mouseleave_father.addEventListener('mouseenter',function(){
+        alert('no bubble father mouseover');
+    });
+    bubble_mouseenter_mouseleave_father.addEventListener('mouseleave',function(){
+        alert('no bubble father mouseout');
+    });
+    bubble_mouseenter_mouseleave_son.addEventListener('mouseenter',function(){
+        alert('no bubble son mouseover');
+    });
+    bubble_mouseenter_mouseleave_son.addEventListener('mouseleave',function(){
+        alert('no bubble son mouseout');
+    });
+
+
+</script>
+</html>

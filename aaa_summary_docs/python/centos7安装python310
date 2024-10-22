@@ -1,0 +1,104 @@
+# 1.概述
+Python2.7.5是CentOS 7默认安装的版本;
+Python3.6.8是CentOS 7中可以通过默认repo安装到的最新版本；
+
+如果简单使用，默认的python可能已经够用，但是如果使用python3版本的话，
+还是推荐升级到3的较高版本3.7/3.8/3.9/3.10/3.11...（不推荐3.6）。
+
+# 2.安装过程
+官方源码包下载地址：https://www.python.org/downloads/source/
+<注意：python3.7后使用ssl需要高版本的openssl支持，
+centos7.9默认1.0.2k-fips版本已经不支持，
+所以需要ssl的话，需要提前额外编译安装高版本openssl>
+
+## 2.1 安装必要的依赖
+yum groupinstall "Development Tools"
+yum install openssl-devel bzip2-devel libffi-devel
+
+## 2.2 下载源码包
+wget https://www.python.org/ftp/python/3.10.9/Python-3.10.9.tgz
+
+## 2.3 解压进入
+tar zxvf Python-3.10.9.tgz
+cd Python-3.10.9
+
+## 2.4 编译安装
+./configure --prefix=/usr/local/python310
+make && make install
+
+## 2.5 加入系统路径
+### 2.5.1 永久加入
+echo 'export PATH=/usr/local/python310/bin:$PATH' >> /etc/profile
+source /etc/profile
+
+### 2.5.2 临时加入
+export PATH=/usr/local/python310/bin:$PATH
+
+# 3.检查python版本
+python3 -V
+
+## 3.1 安装 openssl (Can't connect to HTTPS URL because the SSL module is not available.)
+https://blog.csdn.net/bo_self_effacing/article/details/123628224
+https://blog.csdn.net/Sky_Tree_Delivery/article/details/109078288
+http://www.dtmao.cc/JavaScript/98077.html
+
+```
+安装 openssl-1.1.1
+>> 下载 openssl 1.1.1
+wget https://www.openssl.org/source/openssl-1.1.1n.tar.gz --no-check-certificate
+>> 解压
+tar -zxf openssl-1.1.1n.tar.gz
+>> 切换到解压后的目录
+cd openssl-1.1.1n
+>> 设置安装目录 可以自定义 但是要记住，后面会用到
+./Configure --prefix=/usr/local/openssl
+>> 编译并安装
+make -j && make install
+```
+
+## 3.2 重新编译 python3.10
+```
+>> 切换到 python3.10 解压包目录
+>> 已经编译过的可以先 make clean 清理一下
+make clean
+>> 配置 openssl
+./configure --prefix=/usr/local/python310 --with-openssl=/usr/local/openssl --with-openssl-rpath=auto
+>> 编译安装
+make && make install
+>> 加入系统路径
+echo 'export PATH=/usr/local/python310/bin:$PATH' >> /etc/profile
+source /etc/profile
+```
+
+## 4.超实用卸载python3:
+```
+1、卸载python3
+rpm -qa|grep python3|xargs rpm -ev --allmatches --nodeps
+
+2、删除所有残余文件
+whereis python3 |xargs rm -frv
+
+3、查看现有安装的python
+whereis python
+```
+
+# 5.下载软件
+## 5.1 下载 paddle speech
+https://blog.csdn.net/fj_changing/article/details/127919586
+
+yum install gcc gcc-c++
+yum install libsndfile
+
+pip3 install setuptools_scm -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
+
+pip3 install paddlepaddle -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
+
+pip3 install paddlespeech -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
+
+pip3 install pytest-runner -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
+
+pip3 install paddlespeech -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
+
+
+# 99.常见问题
+

@@ -1,0 +1,19 @@
+1.下载对应版本的 zip 包
+https://curl.se/windows/
+
+比如下载后是: curl-7.83.1_1-win64-mingw.zip
+
+2.解压
+假设解压之后的目录是:
+D:\curl-7.83.1-win64-mingw
+
+3.配置环境变量
+编辑 PATH, 新增配置项:
+D:\curl-7.83.1-win64-mingw\bin
+
+注意: 将这个新增的 PATH 配置项上移至最上方
+注意: 将这个新增的 PATH 配置项上移至最上方
+注意: 将这个新增的 PATH 配置项上移至最上方
+
+参考资料:
+https://www.cnblogs.com/buyiblogs/p/14184545.html

@@ -1,0 +1,29 @@
+version: "2.1"
+services:
+  jobmanager:
+    image: flink:1.10.1
+    expose:
+      - 6123
+    ports:
+      - 8081:8081
+    command: jobmanager
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+
+  taskmanager:
+    image: flink:1.10.1
+    expose:
+      - 6121
+      - 6122
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    links:
+      - "jobmanager:jobmanager"
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+
+#  The Web Client is on port 8081
+#  JobManager RPC port 6123
+#  TaskManagers RPC port 6122
+#  TaskManagers Data port 6121

@@ -1,0 +1,12 @@
+version: '3.1'
+services:
+  redis:
+    image: redis:5.0.14
+    # 因为这个网站的版本都是晚1 - 2个，拉最新版本：image: redis:自己要的版本号
+    restart: always    # 开启重启设置
+    container_name: redis   # docker容器名字
+    environment:
+      - TZ=Asia/Shanghai  # 时区
+    ports:
+      - 26379:6379    # 默认端口
+# 后续搭建集群、主从、主备也是一样的道理，只不过是需要多配置几样东西而已

@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:4.4.0 #根据需要选择自己的镜像
+    restart: always
+    ports:
+      - 27017:27017 #对外暴露停供服务的端口，正式生产的时候理论不用暴露。
+    volumes:
+      - ./mongodb/data/db:/data/db # 挂载数据目录
+      - ./mongodb/data/log:/var/log/mongodb  # 挂载日志目录
+      - ./mongodb/data/config:/etc/mongo  # 挂载配置目录
+    command: --config ./mongodb/mongod.conf # 配置文件

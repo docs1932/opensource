@@ -1,0 +1,12 @@
+version: "3"
+services:
+  dozzle:
+    container_name: owncast
+    image: owncast/owncast:latest
+    privileged: true
+    restart: always
+    volumes:
+      - ~/.owncast/:/app/data
+    ports:
+      - 1935:1935
+      - 8990:8080

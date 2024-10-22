@@ -1,0 +1,13 @@
+1.jps: 查看当前用户下的所有 java 进程
+
+2.关于 classpath:
+在运行 Java 程序时经常要指定一个包含各种 jar 包的目录作为类路径，以前我们习惯用
+-Djava.ext.dirs=... 来指定这个 jar 目录。
+假设所有 jar 均打包至 lib 目录
+2.1 老版本执行命令(windows): 进入 lib 目录, 执行:
+java -Djava.ext.dirs=. com.zy.hello.world.PlayWrightDemo01
+2.2 新版本执行命令(windows): 在 lib 同级目录, 执行:
+java -cp lib\* com.zy.hello.world.PlayWrightDemo01
+
+2.99 参考资料:
+https://my.oschina.net/javayou/blog/4768280

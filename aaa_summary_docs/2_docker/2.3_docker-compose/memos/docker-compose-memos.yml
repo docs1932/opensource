@@ -1,0 +1,11 @@
+version: "3"
+services:
+  dozzle:
+    container_name: memos
+    image: neosmemo/memos:stable
+    privileged: true
+    restart: always
+    volumes:
+      - ~/.memos/:/var/opt/memos
+    ports:
+      - 5230:5230

@@ -1,0 +1,46 @@
+0.前提: 安装了 jdk, 并配置好了 jdk 的环境变量
+
+1.下载 maven: 建议去国内镜像源下载
+https://archive.apache.org/dist/maven/maven-3/
+
+2.解压: apache-maven-3.8.5-bin.tar.gz
+比如放到 D:\opt 下
+假设解压后, 目录是 D:\opt\apache-maven-3.8.5-bin
+
+3.设置环境变量:
+3.1 定义 MAVEN_HOME
+新建系统变量:
+变量名是: MAVEN_HOME
+变量值是: D:\opt\apache-maven-3.8.5-bin
+3.2 定义 PATH
+编辑 PATH, 新增一个配置项
+%MAVEN_HOME%\bin
+
+4.验证是否配置成功，执行以下命令
+mvn -version
+
+5.常见问题
+5.1 cannot download sources
+在项目根目录下执行下述命令：
+mvn dependency:resolve -Dclassifier=sources
+如果出现以下错误：
+java.lang.RuntimeException: Unexpected error: java.security.InvalidAlgorithmParameterException: the trustAnchors parameter must be no
+n-empty -> [Help 1]
+则切换命令为：
+mvn dependency:resolve -Dclassifier=sources -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.insecure=true
+
+5.2 在 pom 中引入依赖之后无法下载且出现下述错误
+java.lang.RuntimeException: Unexpected error: java.security.InvalidAlgorithmParameterException: the trustAnchors parameter must be no
+n-empty -> [Help 1]
+则可行的方式是：
+-Dmaven.multiModuleProjectDirectory=$MAVEN_HOME -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true
+方式1：
+在执行的的 maven 命令后，加上上述命令行参数，如：
+maven clean compile -DskipTests=true -Dmaven.multiModuleProjectDirectory=$MAVEN_HOME -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true
+方式2：
+在 IDEA 中设置：
+File --> Settings --> 搜索 Runner --> 在 maven 的 vm options 中填上上述命令行参数即可
+
+
+#参考资料
+https://blog.csdn.net/csdn17355456893/article/details/120595168

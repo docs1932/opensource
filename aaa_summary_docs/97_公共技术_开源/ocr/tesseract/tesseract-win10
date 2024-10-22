@@ -1,0 +1,14 @@
+0.前提: 安装了 jdk, 并配置好了 jdk 的环境变量
+
+1.下载 tesseract 并点击安装至相应目录即可, 比如: D:\tesseract
+https://digi.bib.uni-mannheim.de/tesseract/
+
+2.下载中文词库 chi_sim.traineddata, 放到 D:\tesseract\tessdata 目录下
+https://digi.bib.uni-mannheim.de/tesseract/tessdata_fast/
+
+3.配置环境变量
+定义 PATH
+编辑 PATH, 新增一个配置项: D:\tesseract
+
+4.验证是否配置成功，执行以下命令
+tesseract -v
