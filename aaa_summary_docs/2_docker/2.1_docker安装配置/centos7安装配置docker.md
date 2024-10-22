@@ -27,17 +27,22 @@ chkconfig docker on
 
 ## 1.5 配置阿里云镜像仓库
 ```
-已有淘宝账号,可以直接搜索https://cr.console.aliyun.com/cn-hangzhou/mirrors,
-登录后选择 --> 镜像加速器
-即可，找到自己的加速地址
 
-centos7 需要在 拿到 镜像加速器地址后依次执行下述命令：
+# 酌情添加国内镜像源(这里未写阿里的源，阿里源需要登录阿里云控制台配置)
+vim  /etc/docker/daemon.json
+{
+    "registry-mirrors": [ 
+        "https://registry.docker-cn.com", 
+        "https://docker.mirrors.ustc.edu.cn", 
+        "https://hub-mirror.c.163.com", 
+        "https://mirror.baidubce.com", 
+        "https://ccr.ccs.tencentyun.com" 
+    ] 
+}
 
-sudo cp -n /lib/systemd/system/docker.service /etc/systemd/system/docker.service
-sudo sed -i "s|ExecStart=/usr/bin/docker daemon|ExecStart=/usr/bin/docker daemon --registry-mirror=<your accelerate address>|g" /etc/systemd/system/docker.service
-sudo sed -i "s|ExecStart=/usr/bin/dockerd|ExecStart=/usr/bin/dockerd --registry-mirror=<your accelerate address>|g" /etc/systemd/system/docker.service
-sudo systemctl daemon-reload
-sudo service docker restart
+# 重新加载文件并重启 docker
+sudo systemctl daemon-reload        #重启daemon进程 
+sudo systemctl restart docker        #重启docker 
 ```
 
 ## 1.6 安装 docker-compose
@@ -53,7 +58,51 @@ docker-compose version
 ```
 
 # 2.docker 安装各种软件工具
-## 2.1 安装 docker 可视化管理界面 portainer
+## 2.1 docker 安装私有仓库
+```
+1.下载镜像
+docker pull registry:2
+
+2.启动镜像
+docker run -d -p 5000:5000 --name registry registry:2
+
+3. 配置Docker客户端：
+    为了让Docker客户端信任 http 的私有仓库，需要修改或创建Docker的配置文件daemon.json（通常位于/etc/docker/）并添加仓库地址：
+{
+  "insecure-registries" : ["your-private-registry-ip:5000"]
+}，
+结合前面设置的 docker 镜像仓库的配置， /etc/docker/daemon.json 内容如下：
+{
+    "registry-mirrors": [
+        "https://registry.docker-cn.com",
+        "https://docker.mirrors.ustc.edu.cn",
+        "https://hub-mirror.c.163.com",
+        "https://mirror.baidubce.com",
+        "https://ccr.ccs.tencentyun.com"
+    ],
+
+  "insecure-registries" : ["192.168.13.146:5000"]
+}
+
+# 4.重新加载文件并重启 docker
+sudo systemctl daemon-reload        #重启daemon进程 
+sudo systemctl restart docker        #重启docker 
+
+# 5.推送镜像到私有仓库
+# 5.1 首先标记要推送的镜像：
+docker tag your-image:tag your-private-registry-ip:5000/your-image:tag
+docker tag 镜像名称:标签 仓库地址:仓库端口/镜像名称:标签
+# 5.2 然后推送到私有仓库：
+docker push your-private-registry-ip:5000/your-image:tag
+docker push 仓库地址:仓库端口/镜像名称:标签
+# 5.3 从私有仓库拉取镜像：
+docker pull your-private-registry-ip:5000/your-image:tag
+
+# 6.查看仓库包含的镜像
+curl http://仓库地址:仓库端口/v2/_catalog
+```
+
+## 2.2 安装 docker 可视化管理界面 portainer
 https://www.cnblogs.com/liuyuelinfighting/p/16013642.html
 ```
 #下载镜像
@@ -83,7 +132,7 @@ http://ip:9000
 >> 重启 systemctl restart docker (切记2375的tcp端口要设置允许访问)
 ```
 
-## 2.2 安装 httpbin.org
+## 2.3 安装 httpbin.org
 https://httpbin.org/
 https://github.com/postmanlabs/httpbin
 https://www.cnblogs.com/Neeo/articles/12168089.html
