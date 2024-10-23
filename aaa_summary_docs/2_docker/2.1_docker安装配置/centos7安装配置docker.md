@@ -84,6 +84,11 @@ docker run -d -p 5000:5000 --name registry registry:2
   "insecure-registries" : ["192.168.13.146:5000"]
 }
 
+------------ 如果 docker search 还是慢，就直接先尝试用 docker pull 命令，一般会好些 ----------------
+------------ 如果 docker search 还是慢，就直接先尝试用 docker pull 命令，一般会好些 ----------------
+------------ 如果 docker search 还是慢，就直接先尝试用 docker pull 命令，一般会好些 ----------------
+------------ 如果 docker search 还是慢，就直接先尝试用 docker pull 命令，一般会好些 ----------------
+
 # 4.重新加载文件并重启 docker
 sudo systemctl daemon-reload        #重启daemon进程 
 sudo systemctl restart docker        #重启docker 
