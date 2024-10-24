@@ -1,3 +1,8 @@
+# 0.文档 & 资源
+https://docs.docker.com/
+https://docker.github.net.cn/
+https://yeasy.gitbook.io/docker_practice
+
 
 # 1.基础命令
 ```
@@ -65,6 +70,12 @@ docker commit -m="提交的描述信息"  -a="作者"  容器ID  要创建的目
 ```
 #新建并启动容器
 docker run [options] image [command] [args...]
+
+# 数据持久化
+docker run -d -v /宿主机绝对路径目录:/容器绝对路径目录 镜像名[:标签]
+
+# 容器互联指令 --link
+
 
 #列出当前所有正在运行的容器
 docker ps [options]

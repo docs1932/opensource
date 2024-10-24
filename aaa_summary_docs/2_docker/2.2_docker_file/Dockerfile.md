@@ -26,16 +26,19 @@ https://hub.docker.com/
 Dockerfile提供了非常多的指令供我们操作，下面例举一些常用的命令：
 
 指令                 作用
-FROM                指定当前镜像是基于哪个镜像的
-RUN                 构建镜像时需要运行的指令
-EXPOSE              当前容器对外暴露的端口号
+ARG                 定义创建镜像的过程中使用的变量，例如： ARG tag=3.5
+FROM                指定当前镜像是基于哪个镜像的，例如： FROM centos:7.5.15-alpine，或者 FROM nginx:latest
+LABEL               给与镜像添加元数据，例如： LABEL maintainer="EMAIL"
+RUN                 构建镜像时需要运行的指令，运行指定命令，例如： RUN yum install -y vim
+EXPOSE              当前容器对外暴露的端口号，但是不会做端口映射，例如： EXPOSE 8081 8099
 WORKDIR             指定在创建容器后终端默认登录进来的工作目录
-ENV                 用于在构建镜像过程中设置环境变量
-ADD                 将宿主机目录下的文件拷贝到镜像
-COPY                拷贝文件和目录到镜像
+ENV                 用于在构建镜像过程中设置环境变量, 例如： ENV JAVA_HOME=/usr/java/jdk1.8.0_291 k1=v1
+ADD                 将宿主机目录下的文件拷贝到镜像，例如 ADD ./*.jar /app/
+COPY                拷贝文件和目录到镜像，例如 COPY ./*.jar /app/
 VOLUME              容器数据卷，用于数据持久化
-CMD                 指定一个容器启动时要运行的命令
-ENTRYPOINT          指定一个容器启动时要运行的命令
+CMD                 指定容器启动时默认执行的命令，与 RUN 不同之处，这个命令只能出现一次，如果出现多次，只有最后一条生效，例如 CMD java -jar app.jar
+ENTRYPOINT          指定一个容器启动时要运行的命令, 例如： ENTRYPOINT ["nginx","-g","daemon off;"] 
+ONBUILD             build镜像时优先执行的指令，只会在子镜像中执行
 ```
 
 ##2.1 FROM
