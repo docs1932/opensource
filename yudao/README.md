@@ -457,7 +457,23 @@ http {
 ```
 
 
+# 3.新建一个模块
+## 3.1 请参考代码生成的逻辑------这是首选方案
 
+## 3.99 如果是手动创建，则几个关键点
+```
+1.如果某张表不希望有 tenant_id，则需要配置：
+yudao.tenant.ignore-tables
+
+2.新建的模块的 biz 模块需要在 yudao-server 的 pom.xml 中引入
+        <dependency>
+            <groupId>cn.iocoder.boot</groupId>
+            <artifactId>yudao-module-pay-biz</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+3.注意配置 swagger 相关的类
+```
 
 
 
