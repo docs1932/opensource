@@ -457,10 +457,11 @@ http {
 ```
 
 
-# 3.新建一个模块
-## 3.1 请参考代码生成的逻辑------这是首选方案
+# 3.其他细节
+## 3.1 代码生成
+### 3.1.1 请参考代码生成的逻辑------这是首选方案
 
-## 3.99 如果是手动创建，则几个关键点
+### 3.1.2 如果是手动创建，则几个关键点
 ```
 1.如果某张表不希望有 tenant_id，则需要配置：
 yudao.tenant.ignore-tables
@@ -475,7 +476,35 @@ yudao.tenant.ignore-tables
 3.注意配置 swagger 相关的类
 ```
 
+## 3.2 想要一个接口完全对外开放: @PermitAll
+```
+@PermitAll
+@GetMapping("/get")
+public CommonResult<ScaleRespVO> getScale(@RequestParam("id") Long id) {
+    ScaleDO scale = scaleService.getScale(id);
+    return success(BeanUtils.toBean(scale, ScaleRespVO.class));
+}
+```
 
+## 3.3 想要一个接口不走 tenant_id 的逻辑
+```
+在 application.yml 的 yudao.tenant.ignore-urls 中添加该接口
+```
+
+## 3.4 想要一张表不走tenant_id 的逻辑
+```
+1.表中不设计 tenant_id 字段
+2.在 application.yml 的 yudao.tenant.ignore-tables 配置中添加该表名称
+```
+
+## 3.5 想要在开发环境看 sql 的日志
+```
+在 application-dev.yml 中配置如下：
+# 开发环境日志级别是 debug
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+```
 
 # 99 相关信息
 
