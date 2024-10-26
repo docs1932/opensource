@@ -55,6 +55,25 @@ Edit Configurations ->
 1.Active profiles: dev
 2.Shorten command line: JAR manifest
 
+
+```
+
+https://blog.csdn.net/qq_46258463/article/details/126017142 (flowable报错)
+
+```
+查看 flowable-engine 版本, 
+\org\flowable\flowable-engine\6.8.0\flowable-engine-6.8.0.jar!\org\flowable\db\create\flowable.mysql.create.engine.sql
+insert into ACT_GE_PROPERTY
+values ('schema.version', 'x.x.x.x', 1);
+
+
+然后将数据库表 act_ge_property 及 act_id_property 中 schema.version 字段的 VALUE_ 改成与jar包对应版本即可成功运行！
+记得所有旧的 value 都改成最新的 'x.x.x.x'
+```
+
+### 1.3.2 运行管理后台的前端
+
+```
 ===================== 前端项目 YUDAO-UI-ADMIN-VUE3 修改 ===================== 
 1.【.env文件】
 VITE_APP_TITLE=章鱼管理系统
@@ -101,10 +120,29 @@ npm run dev
 默认的用户名密码是：admin/admin123
 ```
 
-https://blog.csdn.net/qq_46258463/article/details/126017142 (flowable)
+
+
+### 1.3.3 运行 mall 商城前端
+
+```
+① 克隆 https://github.com/yudaocode/yudao-mall-uniapp (opens new window)项目，并 Star 关注下该项目。
+
+② 下载 HBuilder (opens new window)工具，并进行安装。
+
+③ 点击 HBuilder 的 [文件 -> 导入 -> 从本地项目导入...] 菜单，选择克隆的 yudao-mall-uniapp 目录
+
+④ 执行如下命令，安装 npm 依赖：
+npm i
+
+⑤ 点击 HBuilder 的 [运行 -> 运行到浏览器 -> Chrome] 菜单，使用 H5 的方式运行。成功后，界面如下图所示：
+```
+
+
+
 
 
 # 2.部署
+
 ## 2.1 服务端部署 (假定服务器ip: 192.168.24.133)
 
 ```
