@@ -31,13 +31,22 @@ chkconfig docker on
 # 酌情添加国内镜像源(这里未写阿里的源，阿里源需要登录阿里云控制台配置)
 vim  /etc/docker/daemon.json
 {
-    "registry-mirrors": [ 
-        "https://registry.docker-cn.com", 
-        "https://docker.mirrors.ustc.edu.cn", 
-        "https://hub-mirror.c.163.com", 
-        "https://mirror.baidubce.com", 
-        "https://ccr.ccs.tencentyun.com" 
-    ] 
+    "registry-mirrors": [
+        "https://docker.registry.cyou",
+        "https://docker-cf.registry.cyou",
+        "https://dockercf.jsdelivr.fyi",
+        "https://docker.jsdelivr.fyi",
+        "https://dockertest.jsdelivr.fyi",
+        "https://mirror.aliyuncs.com",
+        "https://dockerproxy.com",
+        "https://mirror.baidubce.com",
+        "https://docker.m.daocloud.io",
+        "https://docker.nju.edu.cn",
+        "https://docker.mirrors.sjtug.sjtu.edu.cn",
+        "https://docker.mirrors.ustc.edu.cn",
+        "https://mirror.iscas.ac.cn",
+        "https://docker.rainbond.cc"
+    ]
 }
 
 # 重新加载文件并重启 docker
