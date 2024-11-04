@@ -121,6 +121,14 @@ npm run dev
 ```
 
 
+```
+1.修改页面布局，菜单展示等
+src/store/modules/app.ts
+2.关掉 <Setting> 按钮
+删除 Layout.vue 中的代码
+<Setting></Setting>
+```
+
 
 ### 1.3.3 运行 mall 商城前端
 
