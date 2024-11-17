@@ -45,7 +45,11 @@ vim  /etc/docker/daemon.json
         "https://docker.mirrors.sjtug.sjtu.edu.cn",
         "https://docker.mirrors.ustc.edu.cn",
         "https://mirror.iscas.ac.cn",
-        "https://docker.rainbond.cc"
+        "https://docker.rainbond.cc",
+        "https://dockerproxy.cn",
+        "https://docker.rainbond.cc",
+        "https://docker.udayun.com",
+        "https://docker.211678.top"
     ]
 }
 
@@ -87,7 +91,12 @@ docker run -d -p 5000:5000 --name registry registry:2
         "https://docker.mirrors.ustc.edu.cn",
         "https://hub-mirror.c.163.com",
         "https://mirror.baidubce.com",
-        "https://ccr.ccs.tencentyun.com"
+        "https://ccr.ccs.tencentyun.com",
+        "https://docker.rainbond.cc",
+        "https://dockerproxy.cn",
+        "https://docker.rainbond.cc",
+        "https://docker.udayun.com",
+        "https://docker.211678.top"
     ],
 
   "insecure-registries" : ["192.168.13.146:5000"]

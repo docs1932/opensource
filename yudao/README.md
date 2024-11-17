@@ -43,6 +43,7 @@ WHERE NAME IN ('作者动态','Boot 开发文档','Cloud 开发文档');
 ===================== yml文件修改 ===================== 
 1.[application.yaml]
 spring.profiles.active: dev
+aj.captcha.water-mark: psyscale
 2.[application-dev.yaml]
 spring.datasource.dynamic.datasource.master.url=改成自己的
 spring.datasource.dynamic.datasource.slave.url=改成自己的
