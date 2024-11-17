@@ -122,12 +122,16 @@ npm run dev
 ```
 
 
+```前端相关配置```
 ```
 1.修改页面布局，菜单展示等
 src/store/modules/app.ts
 2.关掉 <Setting> 按钮
 删除 Layout.vue 中的代码
 <Setting></Setting>
+3.修改默认配置为白色
+src/App.vue 中
+setDefaultTheme --》 appStore.setIsDark(false)
 ```
 
 
