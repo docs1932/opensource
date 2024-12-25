@@ -161,7 +161,39 @@ npm i
 ```
 0.请先登录将要部署服务端 jar 包的服务器，安装 font
 yum install -y fontconfig
+# 安装宋体
+yum install wqy-zenhei-fonts
+yum install wqy-microhei-fonts
+
 否则，可能在访问首页时可能会报错，Fontconfig head is null, check your fonts or fonts configuration.
+
+# 1.安装字体库（已存在的跳过）
+yum -y install fontconfig
+
+# 2.新建存储中文字体的目录
+mkdir /usr/share/fonts/chinese
+
+# 3.利用FTP或其他工具将windows字体上传
+将 C:\Windows\Fonts 整个目录压缩，然后打包上传至 linux
+
+# 4.安装ttmkfdir用于搜索目录中所有的字体信息并汇总生成fonts.scale文件
+yum -y install ttmkfdir
+ttmkfdir -e /usr/share/X11/fonts/encodings/encodings.dir
+
+# 5.添加中文字体路径
+#vi /etc/fonts/fonts.conf
+<!-- Font directory list -->
+<dir>/usr/share/fonts/chinese</dir>
+
+# 6.刷新缓存
+fc-cache
+
+# 7.验证
+fc-list
+
+https://blog.51cto.com/u_16099244/12371136
+https://www.cnblogs.com/cpw6/p/13639428.html
+
 
 1.放开 主 pom 和 yudao-server 下 pom 的关于 module 的注释
 pom.xml
