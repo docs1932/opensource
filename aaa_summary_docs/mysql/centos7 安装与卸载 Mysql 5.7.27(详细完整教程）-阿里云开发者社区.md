@@ -200,6 +200,7 @@ symbolic-links=0
 log-error=/var/log/mysqld.log
 pid-file=/var/run/mysqld/mysqld.pid
 lower_case_table_names=1
+port=3309
 ```
 
 **12.重启一下MySQL,令配置生效**
