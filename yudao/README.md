@@ -191,6 +191,8 @@ fc-cache
 # 7.验证
 fc-list
 
+# 8.重启系统使得修改生效!!!!
+
 https://blog.51cto.com/u_16099244/12371136
 https://www.cnblogs.com/cpw6/p/13639428.html
 
