@@ -1,6 +1,9 @@
-# 1.cursor
+# 1.cursor 
 https://www.cursor.com/
 https://github.com/yuaotian/go-cursor-help
+
+## 1.0 专家提示词
+https://cursor.directory/
 
 ## 1.1 agent 模式
 ```
@@ -25,8 +28,17 @@ Always respond in 中文
 # 2.windsurf
 https://codeium.com/windsurf
 
-# 3.cofounder
+# 3.trae (字节)
+https://www.trae.ai/download
+
+# 3.bolt.new
+https://bolt.new/
+
+# 4.github spark
+https://githubnext.com/projects/github-spark
+
+# 5.cofounder
 https://github.com/raidendotai/cofounder
 
-# 4.V0
+# 6.V0
 https://v0.dev/
