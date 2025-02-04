@@ -31,6 +31,9 @@ https://codeium.com/windsurf
 # 3.trae (字节)
 https://www.trae.ai/download
 
+# 4.idx (google)
+https://idx.google.com/
+
 # 3.bolt.new
 https://bolt.new/
 
