@@ -33,7 +33,7 @@ https://www.trae.ai/download
 
 # 4.idx (google)
 https://idx.google.com/
-
+ 
 # 3.bolt.new
 https://bolt.new/
 
