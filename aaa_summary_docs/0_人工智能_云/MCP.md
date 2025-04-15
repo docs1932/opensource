@@ -14,6 +14,7 @@ https://github.com/modelcontextprotocol/servers
 https://github.com/punkpeye/awesome-mcp-servers
 网站：通过下面的网站查找 MCP servers：
 
+https://smithery.ai/
 https://mcpservers.org
 https://mcp.so
 https://glama.ai/mcp/servers
@@ -23,6 +24,24 @@ UI自动化相关的 MCP servers
 playwright: https://github.com/executeautomation/mcp-playwright
 browserbase: https://github.com/browserbase/mcp-server-browserbase
 puppeteer https://github.com/modelcontextprotocol/servers/tree/HEAD/src/puppeteer
+```
+
+
+```
+{
+  "mcpServers": {
+    "browser-tools-mcp":{
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@agentdeskai/browser-tools-mcp@latest",
+        "D:\\0000_AI\\MCP\\MCP_servers\\browser-tools-mcp"
+      ]
+    }
+  }
+}
 ```
 
 https://www.cnblogs.com/fnng/p/18744210
