@@ -5,6 +5,9 @@ https://www.oracle.com/java/technologies/downloads
 ```
 
 # 1.openjdk 下载
+
+https://jdk.java.net/archive/
+
 ```
 https://openjdk.java.net/
 如果下载慢，就去国内公司下载，如
