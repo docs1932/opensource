@@ -3,6 +3,7 @@
 
 # 2. 快捷键 (windows)
 ```
+进入到某个文件的源码中：F12
 全局搜索代码：CTRL + SHIFT + F
 打开右侧侧边栏：CTRL + SHIFT + I
 打开控制台: CTRL + ` (位于键盘左上角的波浪号那里) 
@@ -49,6 +50,7 @@ https://huggingface.co/models
 
 #### 3.1.1.3 cline 支持免费模型：Ollama
 #### 3.1.1.4 cline 支持免费模型：Claude
+#### 3.1.1.5 cline 支持免费模型：Cline
 
 ## 3.2 python related 
 ### 3.2.1 python
