@@ -49,4 +49,50 @@ https://github.com/AgentDeskAI/browser-tools-mcp
 }
 ```
 
+# 3.写个 mcp server 并发布到公网
+## 3.1 写一个基于 stdio 协议的 mcp server，并发布到 pypi 上
+### 3.1.1 创建一个 mcp server
+``` 创建工程 ```
+```
+1.安装指定版本的 python
+ uv python install 3.13
+2.切换到工程目录
+CD D:\0000_AI\MCP\MCP_servers\zx_mcp_server_1
+3.初始化环境
+uv init . -p 3.13
+4.安装 mcp 的 sdk 安装上
+uv add "mcp[cli]"
+5.使用 vscode/pycharm 打开工程目录
+```
+
+``` main.py 文件 ```
+```
+# server.py
+from mcp.server.fastmcp import FastMCP
+
+# Create an MCP server
+mcp = FastMCP("Demo")
+
+
+# Add an addition tool
+@mcp.tool()
+def sum(a: int, b: int) -> int:
+    """Add two numbers"""
+    return a + b
+
+
+# Add a dynamic greeting resource，，类似于GET 方法，只读数据
+@mcp.resource("greeting://{name}")
+def get_greeting(name: str) -> str:
+    """Get a personalized greeting"""
+    return f"Hello, {name}!"
+
+if __name__ == "__main__":
+    # 写一个 stdio 协议的 mcp server，本地调用
+    mcp.run(transport='stdio')
+```
+
+### 3.1.2 注册 pypi 账号
+https://pypi.org/
+
 https://www.cnblogs.com/fnng/p/18744210
