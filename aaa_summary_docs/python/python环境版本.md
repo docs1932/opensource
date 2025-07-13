@@ -1,7 +1,20 @@
 
 # 1.概述
 
-## 1.99 版本管理工具
+## 1.99 版本管理工具 (uv, poetry, PDM, pip, pip3)
+
+```
+原始的样子：
+1.创建虚拟环境
+python -m venv .venv
+2.激活虚拟环境
+source .venv/bin/activate
+3.编辑依赖配置文件
+edit pyproject.toml
+4.安装依赖
+pip install -e .
+```
+
 ### 1.99.1 uv (热度较高)
 https://docs.astral.sh/uv/
 ```
@@ -21,7 +34,16 @@ rm $HOME\.local\bin\uv.exe
 rm $HOME\.local\bin\uvx.exe
 ```
 
-#### 1.99.1.1 使用 uv 创建一个工程
+#### 1.99.1.1 拿到一个基于 uv 创建的工程，该如何创建环境呢？
+```
+1.进入项目目录下，执行下述命令即可
+uv sync
+2.运行虚拟环境中的主程序，执行下述命令即可
+uv run main.py
+(传统模式，需要先激活环境：source .venv/bin/activate, 然后运行程序：python main.py)
+```
+
+#### 1.99.1.2 使用 uv 创建一个工程
 https://github.com/modelcontextprotocol/python-sdk
 ```
 1.安装指定版本的 python
@@ -30,7 +52,7 @@ https://github.com/modelcontextprotocol/python-sdk
 CD D:\0000_AI\MCP\MCP_servers\zx_mcp_server_1
 3.初始化环境
 uv init . -p 3.13
-4.安装 mcp 的 sdk 安装上
+4.安装 mcp 的 sdk 安装上 (uv add 会安装依赖，并检查创建虚拟环境)
 uv add "mcp[cli]"
 5.使用 vscode/pycharm 打开工程目录
 ---------------------------------------------
@@ -134,6 +156,19 @@ http://127.0.0.1:8000
 }
 5.输入指令，例如：将可以在对话框中看到使用了我们的自定义 mcp server
 计算 25+65 的值
+```
+#### 1.99.1.3 打包运行一个工程
+```
+1.在 project.toml 中添加
+
+[project.scripts]
+zx = "my_mcp:main"
+
+2.然后执行 uv build 就会生成一个 whl 文件，该文件上传到 python 的软件仓库 pypi，其他人就可以使用了
+D:\0000_AI\MCP\MCP_servers\zx_mcp_server_1\dist\zx_mcp_server_1-0.1.0-py3-none-any.whl
+
+3.也可以本地使用一下试试
+uv tool install D:\0000_AI\MCP\MCP_servers\zx_mcp_server_1\dist\zx_mcp_server_1-0.1.0-py3-none-any.whl
 ```
 
 # 2.想要运行一个 python 程序，通常要解决 2 个问题

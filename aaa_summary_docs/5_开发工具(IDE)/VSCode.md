@@ -14,6 +14,14 @@
 光标回到下一步:  ALT +  右箭头 或者 CTRL + PgDn ( + Fn)
 选中所有符合条件的单词：光标先选中某个单词，然后 CTRL + F2
 选中某个符合条件的单词：CTRL + D
+
+debug 相关：
+    继续(F5)
+    单步跳过(F10)
+    单步调试(F11)
+    单步跳出(Shift + F11)
+    重启(Ctrl + Shift + F5 )
+    停止/结束(Shift + F5)
 ```
 
 # 3.插件
@@ -53,9 +61,12 @@ https://huggingface.co/models
 #### 3.1.1.5 cline 支持免费模型：Cline
 
 ## 3.2 python related 
+```可以在右下角选择 python 版本号来调整 python 环境```
+
 ### 3.2.1 python
 ### 3.2.2 pylance
 ### 3.2.3 jupyter
+### 3.2.4 ruff (代码检查)
 
 ## 3.3 java related
 
