@@ -126,6 +126,42 @@ docker attach 容器ID
 docker exec -it 容器ID /bin/bash
 ```
 
+# 4. docker 网络
+```
+========= docker 网络模式 ===========
+1. bridge 模式
+docker 网络默认是 bridge 模式。该模式下，每个容器都会分配一个内部 IP 地址，一般是 172.17.x.x 开头的。
+容器直接可以通过 IP 互相访问，但是容器网络和宿主机网络是隔离的。
+2.host 模式
+容器直接使用宿主机的 ip 地址，无须 -p 参数进行端口映射。容器内的服务直接运行在宿主机的端口上。
+3.None 模式
+就是不使用任何网络，容器之间无法互相访问。
+
+默认情况下，docker 已经存在上述 3 种网络模式，可以使用 docker network ls 命令查看。
+
+========= docker 子网络模式 ===========
+可以使用 docker network create 创建子网
+同一个子网的容器可以通信，同一个子网内部，容器可以通过名字通信，不用 直接输入 IP。
+不同子网的容器不可以通信。
+========= docker 网络命令 ===========
+1.查看当前 docker 网络
+docker network list
+(host 模式，bridge 模式， none 模式) (--> 默认的 3 个网络是无法删除的，自己创建的子网络是可以删除的)
+2.删除 docker 网络
+docker network rm [网络名称]
+3.创建子网络 (默认是 bridge 模式)
+docker network create [子网名称]
+创建 2 个容器，位于同一个子网内
+docker run -d --name nginx -v /home/nginx/html:/usr/share/nginx/html --network network1 -p 9091:80
+docker run -d --name tomcat --network network1 -p 9092:8080
+进入一个容器
+docker exec -it nginx /bin/sh
+然后执行
+ping tomcat 即可看到 tomcat 内部网络的 ip 地址，其原理是 docker 内部的 DNS 机制
+4.以host 模式启动容器
+docker run -d --name nginx -v /home/nginx/html:/usr/share/nginx/html -p 9091:80 --network host
+```
+
 
 # 2.常用工具
 ```
