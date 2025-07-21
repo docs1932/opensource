@@ -1,0 +1,15 @@
+FROM  python:3.13
+
+WORKDIR /app
+
+# 表示拷贝当前目录下的所有文件到镜像的/app目录下
+COPY .  .
+
+# 安装依赖包
+RUN pip install -r requirements.txt
+
+# 暴露端口
+EXPOSE 5000
+
+# 容器启动时执行的命令
+CMD ["python", "main.py"]

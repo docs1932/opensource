@@ -1,5 +1,25 @@
+https://github.com/tech-shrimp/docker_installer
 
 # 1.下载对应操作系统的版本，以 windows 为例
+## 1.1 前置准备工作
+```
+1.任务栏搜索功能，启用:
+1) "适用于Linux的Windows子系统" 
+2) "虚拟机平台"
+
+2.管理员权限打开命令提示符，安装wsl2
+wsl --set-default-version 2
+wsl --update --web-download
+
+3.下载Windows版本安装包，进入此项目的Release
+https://www.docker.com/products/docker-desktop/
+
+4.安装
+直接点击安装即可
+
+可选: 如果想自己指定安装目录，可以使用命令行的方式 参数 --installation-dir=D:\Docker可以指定安装位置
+start /w "" "Docker Desktop Installer.exe" install --installation-dir=D:\Docker
+```
 
 # 2.修改
 ```
