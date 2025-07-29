@@ -122,8 +122,14 @@ docker inspect 容器ID
 #进入某个容器内部
 docker attach 容器ID
 
-# 进入某个容器
+# 进入某个容器（该容器已启动）
 docker exec -it 容器ID /bin/bash
+
+# 进入某个未启动的容器，可以启动一个临时的容器
+docker run -it --entrypoint /bin/bash 镜像名
+docker run -it --entrypoint pwsh 镜像名
+在 上述调试时进行必要的更改后，使用 exit 退出，然后提交更改
+docker commit -m="提交信息" -a="作者" 容器ID 新的镜像名:标签
 ```
 
 # 4. docker 网络
