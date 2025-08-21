@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <!-- https://docs.gitlab.com/user/packages/maven_repository/ -->
+
+    <localRepository>.m2/repository</localRepository>
+
+    <servers>
+        <server>
+            <id>gitlab-maven</id>
+            <configuration>
+                <httpHeaders>
+                    <property>
+                        <name>Job-Token</name>
+                        <value>${CI_JOB_TOKEN}</value>
+                    </property>
+                </httpHeaders>
+            </configuration>
+        </server>
+		<server>
+			<id>my-private-repository</id>
+			<username>admin</username>   
+			<password>admin123</password>   
+		</server> 
+    </servers>
+
+    <profiles>
+        <profile>
+            <id>jdk-21</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <jdk>21</jdk>
+            </activation>
+            <repositories>
+                <repository>
+                    <id>my-private-repository</id>
+                    <url>https://maven.aliyun.com/repository</url>
+                </repository>
+                <repository>
+                    <id>gitlab-maven</id>
+                    <url>${CI_API_V4_URL}/groups/${CI_PROJECT_NAMESPACE_ID}/-/packages/maven/${CI_COMMIT_REF_SLUG}</url>
+                </repository>
+            </repositories>
+            <properties>
+                <maven.compiler.source>21</maven.compiler.source>
+                <maven.compiler.target>21</maven.compiler.target>
+                <altDeploymentRepository>gitlab-maven::default::${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven/${CI_COMMIT_REF_SLUG}</altDeploymentRepository>
+            </properties>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>jdk-21</activeProfile>
+    </activeProfiles>
+</settings>

@@ -1,0 +1,16 @@
+stages:
+  - build
+
+build-linux-image:
+  stage: build
+  image: docker:latest
+  tags:
+    - zx-platform
+    - DIND
+  services:
+    - docker:dind
+  script:
+    - IMAGE_NAME=${CI_REGISTRY_IMAGE}/jdk21:0.1
+    - echo -n $CI_REGISTRY_PASSWORD | docker login --username $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+    - docker build -f Dockerfile . -t $IMAGE_NAME
+    - docker push $IMAGE_NAME
