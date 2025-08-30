@@ -35,12 +35,12 @@
             </activation>
             <repositories>
                 <repository>
-                    <id>my-private-repository</id>
-                    <url>https://maven.aliyun.com/repository</url>
-                </repository>
-                <repository>
                     <id>gitlab-maven</id>
                     <url>${CI_API_V4_URL}/groups/${CI_PROJECT_NAMESPACE_ID}/-/packages/maven/${CI_COMMIT_REF_SLUG}</url>
+                </repository>
+                <repository>
+                    <id>my-private-repository</id>
+                    <url>https://maven.aliyun.com/repository</url>
                 </repository>
             </repositories>
             <properties>
