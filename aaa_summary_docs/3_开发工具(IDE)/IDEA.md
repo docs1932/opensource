@@ -27,25 +27,50 @@ https://plantuml.com/sequence-diagram
 
 ## 3.n 其他插件
 ```
-#热加载插件：JRebel and XRebel
+#热加载插件：
+JRebel and XRebel
+
 #jclasslib (查看字节码文件: view --> show bytecode with jclasslib)
+
 #Alibaba Java Coding Guidelines
+
 # BashSupport
+
 # FindBugs-IDEA-1.0.1
+
 # junitGenerator V2.0插件
+
 # lombok-plugin-0.19-2018.EAP
+
 # markdown-182.2371
+
 # mavenHelper
+
 # VisualVMLauncher
+
 # Git
+
 # jclasslib bytecode viewer(可视化的字节码查看插件, jvm指令查看)
+
 # Stack trace to UML
+
 # sequencediagram (时序图插件, 解读源码必备)
+
 #IdeaJad (反编译神器)
+
 #GrepConsole(日志查看神器)
+
 #TranslationPlugin(翻译)
+
 #free-idea-mybatis
+
 #MybatisCodeHelperNew
+
+Excalidraw Integration
+
+GWT
+
+Maven Helper
 ```
 
 
