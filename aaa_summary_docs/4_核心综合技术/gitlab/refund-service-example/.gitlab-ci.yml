@@ -1,0 +1,64 @@
+stages:
+  - build
+  - integration-test
+  - deploy
+  - trigger
+
+variables:
+  MVN_OPTS: "-s /opt/maven/conf/settings.xml"
+
+default:
+  image: $CI_REGISTRY/az/docker/ci-linux/jdk21:0.1
+  tags:
+    - zx-platform
+    - linux-runner
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - .m2/repository
+
+build:
+  stage: build
+  script:
+    - echo "Starting build..."
+    - mvn $MVN_OPTS clean verify -Djacoco 2>&1 | tee mvn.log
+    - echo "Starting zip..."
+    - zip -r jacoco-module/jacoco-reports.zip jacoco-module/target/site/jacoco-aggregate/
+  artifacts:
+    when: always
+    paths:
+      - mvn.log
+      - jacoco-reports.zip
+    reports:
+      junit: "**/surefire-reports/*.xml"
+      coverage_report:
+        coverage_format: jacoco
+        path: jacoco-module/target/site/jacoco-aggregate/jacoco.xml
+    expire_in: 2 days
+
+integration-test:
+  stage: integration-test
+  script:
+    - |
+      docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+      sh ./integration-test/start_integration_test.sh
+  artifacts:
+    when: always
+    paths:
+      - ./logs
+    expire_in: 2 days
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Starting deploy..."
+    - mvn $MVN_OPTS deploy -DskipTests
+
+trigger-downstream-pipelines:
+  stage: trigger
+  trigger:
+    project: "az/payment"
+    branch: $CI_COMMIT_REF_SLUG
+    forward:
+      yaml_variables: false
+  allow_failure: true

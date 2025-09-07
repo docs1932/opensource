@@ -1,0 +1,49 @@
+version: "3.9"
+services:
+  redis:
+      image: redis
+      container_name: "redis_${CI_COMMIT_REF_SLUG}"
+      hostname: "redis_${CI_COMMIT_REF_SLUG}"
+      expose:
+        - 6379
+      #command:
+      healthcheck:
+        test: ["CMD", "redis-cli", "ping"]
+        interval: 5s
+        timeout: 30s
+        retries: 3
+        start_period: 40s
+  payment-service:
+    image: "${CI_REGISTRY}/az/ci-payment-service:1.0"
+    container_name: "payment_service_${CI_COMMIT_REF_SLUG}"
+    hostname: "payment_service_${CI_COMMIT_REF_SLUG}"
+    expose:
+      - 8089
+    command: java -jar /app.jar
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8089/actuator/health"]
+      interval: 5s
+      timeout: 30s
+      retries: 3
+      start_period: 40s
+  integration-test:
+    image: "${CI_REGISTRY}/az/docker-ci:1.0"
+    container_name: "integration_test_service_${CI_COMMIT_REF_SLUG}"
+    hostname: "integration_test_service_${CI_COMMIT_REF_SLUG}"
+    depends_on:
+      payment-service:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    expose:
+      - 8088
+    environment:
+      - REDIS_HOST=redis_${CI_COMMIT_REF_SLUG}
+      - PAYMENT_SERVICE_HOST=payment_service_${CI_COMMIT_REF_SLUG}
+      - ./logs:/app/logs
+    command: sh start.sh
+
+networks:
+  default:
+    external: true
+    name: "ci_network_${CI_COMMIT_REF_SLUG}"

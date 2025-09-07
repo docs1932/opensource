@@ -38,7 +38,7 @@ RUN echo "📥 下载 OpenJDK ${JDK_VERSION}..." && \
     echo "📦 解压 JDK..." && \
     tar -xzf jdk21.tar.gz && \
     rm jdk21.tar.gz && \
-    mv jdk-* jdk-${JDK_VERSION}
+    mv jdk-* jdk
 
 # —————————————————— 安装 Maven ——————————————————
 RUN echo "📥 下载 Apache Maven ${MAVEN_VERSION}..." && \
@@ -46,7 +46,7 @@ RUN echo "📥 下载 Apache Maven ${MAVEN_VERSION}..." && \
     echo "📦 解压 Maven..." && \
     tar -xzf maven.tar.gz && \
     rm maven.tar.gz && \
-    mv apache-maven-${MAVEN_VERSION} maven-${MAVEN_VERSION}
+    mv apache-maven-${MAVEN_VERSION} maven
 
 # —————————————————— 安装 Node.js ——————————————————
 RUN echo "📥 下载 Node.js v${NODE_VERSION}..." && \
@@ -54,12 +54,12 @@ RUN echo "📥 下载 Node.js v${NODE_VERSION}..." && \
     echo "📦 解压 Node.js..." && \
     tar -xzf node.tar.gz && \
     rm node.tar.gz && \
-    mv node-v${NODE_VERSION}-linux-x64 node-${NODE_VERSION}
+    mv node-v${NODE_VERSION}-linux-x64 node
 
 # —————————————————— 设置环境变量 ——————————————————
-ENV JAVA_HOME=/opt/jdk-21
-ENV MAVEN_HOME=/opt/maven-3.9.9
-ENV NODE_HOME=/opt/node-22.13.1
+ENV JAVA_HOME=/opt/jdk
+ENV MAVEN_HOME=/opt/maven
+ENV NODE_HOME=/opt/node
 ENV PATH=$JAVA_HOME/bin:$MAVEN_HOME/bin:$NODE_HOME/bin:$PATH
 
 # 验证安装
