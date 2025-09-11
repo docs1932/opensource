@@ -102,6 +102,12 @@ npm config set prefix D:\software\software_for_develop\nvm\v20.15.0\node_global\
 npm config set cache D:\software\software_for_develop\nvm\v20.15.0\node_cache\  //全局包缓存目录，就在node安装目录新建了个nodejs文件夹存放
 npm get prefix 查看全局安装的位置
 ```
+
+## 2.6 将 global 加入到环境变量中
+```
+高级系统设置 -> 环境变量 -> 系统变量 -> PATH 中查看是否存在：
+%NVM_HOME%\nodejs\node_global
+```
  
 
 # 99.参考资源
