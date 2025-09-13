@@ -1145,7 +1145,7 @@ const p1 = new Person('tom', 18);
 p1.speak(3);
 ```
 
-定义对象结构
+定义对象结构 (匿名内部类)
 ```ts
 interface UserInterface {
     name: string;
@@ -1164,7 +1164,7 @@ const user: UserInterface = {
 };
 ```
 
-定义函数结构
+定义函数结构 (函数式接口)
 
 ```ts
 // 定义函数结构
@@ -1433,8 +1433,8 @@ type JobInfo = {
 const p2 = new Person<JobInfo>("tom", 30, { title: '研发总监', company: '发发发科技公司' });
 ```
 
-## 九、类型声明文件
-
+## 九、类型声明文件 (.d.ts 文件)
+>> 目前绝大部分主流类js库都提供了类型声明文件，@types/jquery、@types/react、@types/node等等。
 类型声明⽂件是 TypeScript 中的⼀种特殊⽂件，通常以 .d.ts 作为扩展名。它的主要作⽤是为现有的
 JavaScript 代码提供类型信息，使得 TypeScript 能够在使用这些 JavaScript 库或模块时进行类型检查和提示。
 
@@ -1463,7 +1463,7 @@ console.log(x, y);
 ```
 
 
-# 装饰器
+# 装饰器 (就是Java里的注解！！！)
 [🪩 附加篇：TypeScript装饰器_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1YS411w7Bf?spm_id_from=333.788.videopod.episodes&vd_source=eec8d29cc9562259bc3afddcb56823bd&p=4)
 
 ## 一、简介
