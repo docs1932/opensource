@@ -2,6 +2,8 @@
 # TypeScript 快速上手
 [🪩 禹神：三小时快速上手TypeScript，TS速通教程_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1YS411w7Bf/?spm_id_from=333.1007.top_right_bar_window_history.content.click&vd_source=eec8d29cc9562259bc3afddcb56823bd)
 
+// @ts-ignore --> ts 忽略某行检查
+
 ## ⼀、TypeScript 简介
 - 1. TypeScript 由微软开发,是基于 JavaScript 的⼀个扩展语⾔。
 - 2. TypeScript 包含了 JavaScript 的所有内容,即: TypeScript 是 JavaScrip t 的超集。
@@ -165,6 +167,10 @@ console.log(size); // 输出: 5
 ```
 
 ## 七、常⽤类型与语法
+
+### 0.symbol
+
+
 ### 1. any
 
 any 的含义是:任意类型,⼀旦将变量类型限制为 any ,那就意味着==放弃了==对该变量的类型检查。
@@ -477,9 +483,17 @@ arr2 = ['hello','world']
 
 备注:上述代码中的 `Array<string>` 属于泛型,下⽂会详细讲解。
 
-### 6. tuple
+### 6. tuple (长度和类型固定)
 
 元组 (Tuple) 是⼀种==特殊的数组类型==,可以存储固定数量的元素,并且每个元素的类型是==已知==的且可以==不同==。元组⽤于精确描述⼀组值的类型， ? 表示可选元素。
+
+````ts
+最佳实践: 声明时，添加 readonly 关键字!!!!!!!!!!!!!!!!!!!
+
+const tuple1: readonly [string,boolean,number] = ["a", false, 12]
+tuple1.push("kkkkkkkkkkk")
+console.log(tuple1[3])
+````
 
 ```ts
 // 第⼀个元素必须是 string 类型,第⼆个元素必须是 number 类型。
@@ -798,7 +812,7 @@ src.forEach((el) => dst.push(el));  //箭头函数的简写形式。此时,dst.p
 
 本⼩节是复习类相关知识,如果有相关基础可以跳过。
 
-类 class
+#### 10.1 类 class
 ```ts
 class Person {
 	// 属性声明
@@ -821,7 +835,48 @@ class Person {
 const p1 = new Person('周杰伦', 38);
 ```
 
-Student 继承 Person
+#### 10.2 原型方法和实例方法
+```
+class Person {
+    name: string;
+    // 实例方法：每个实例都有独立的函数对象
+    sayHello: () => void; // ← 声明
+
+    constructor(name: string) {
+        this.name = name;
+        this.sayHello = () => {
+            console.log(`Hello, I'm ${this.name}`);
+        };
+    }
+
+    // ✅ 原型方法 —— 所有实例共享
+    sayHi() {
+        console.log(`Hi, I'm ${this.name}`);
+    }
+}
+
+1.实例方法（Instance Method）
+定义在类的 constructor 内部或使用“参数属性”时在实例上创建的方法
+每个实例都拥有自己的一份拷贝
+通常通过 this.xxx = function() {} 或箭头函数赋值
+
+2. 原型方法（Prototype Method）
+定义在类中（或 prototype 上）的方法
+所有实例共享同一个方法（内存中只有一份）
+TypeScript 中默认所有“类方法”都是原型方法
+
+=============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+特性	       原型方法（Prototype Method）	         实例方法（Instance Method）
+定义位置	       类中直接定义的方法（或挂载到 .prototype）	 在构造器中 this.xxx = function 定义
+内存占用	       ✅ 所有实例共享一份 → 节省内存	         ❌ 每个实例独立一份 → 占用更多内存
+this 指向	方法调用时动态绑定 this	                 箭头函数版本会捕获定义时的 this
+能否访问私有字段	✅ 可以（如果是 class 中定义的）	         ✅ 可以
+能否被继承	✅ 可以	                                 ✅ 可以（但每个子类实例也会创建新副本）
+性能	           ✅ 更优（共享方法）                 	 ⚠️ 稍差（重复创建函数）
+TypeScript 推荐	    ✅ 默认推荐方式	                 ⚠️ 仅在需要绑定 this 或特殊场景使用
+```
+
+#### 10.3 Student 继承 Person
 ```ts
 class Student extends Person {
 	grade: string;
@@ -842,6 +897,16 @@ class Student extends Person {
 	console.log(`${this.name}正在努力学习中......`);
 	}
 }
+```
+
+#### 10.4 单例类
+```
+
+```
+
+#### 10.4 静态属性和静态方法
+```
+
 ```
 
 ### 11. 属性修饰符
@@ -1115,7 +1180,7 @@ e1.printPackage()
 
 interface 是⼀种`定义结构`的⽅式,主要作⽤是为:类、对象、函数等规定`⼀种契约`,这样 可以确保代码的⼀致性和类型安全,但要注意 interface `只能`定义`格式`,`不能`包含`任何实现` !
 
-• 定义类结构
+#### 13.1  定义类结构
 ```ts
 // PersonInterface接口，用与限制Person类的格式
 interface PersonInterface {
@@ -1145,7 +1210,7 @@ const p1 = new Person('tom', 18);
 p1.speak(3);
 ```
 
-定义对象结构 (匿名内部类)
+#### 13.2 定义对象结构 (匿名内部类)
 ```ts
 interface UserInterface {
     name: string;
@@ -1164,7 +1229,7 @@ const user: UserInterface = {
 };
 ```
 
-定义函数结构 (函数式接口)
+#### 13.3 定义函数结构 (函数式接口)
 
 ```ts
 // 定义函数结构
@@ -1177,7 +1242,7 @@ const count: CountInterface = (x, y) => {
 }
 ```
 
-接口之间的继承
+#### 13.4 接口之间的继承
 一个 interface 继承另一个 interface，从而实现代码的复用
 ```ts
 interface PersonInterface {
@@ -1196,7 +1261,7 @@ const stu: StudentInterface = {
 }
 ```
 
-接口自动合井（可重复定义）
+#### 13.5 接口自动合井（可重复定义）
 ```ts
 // PersonInterface接口
 interface PersonInterface {
@@ -1229,7 +1294,70 @@ class Person implements PersonInterface {
 }
 ```
 
-总结:何时使⽤接⼝?
+#### 13.6 如果定义了一个接口包含3个字段，后续想加字段，有哪些方案
+```
+interface ITax {
+  id: number,
+  name: string,
+  country: string
+}
+
+const tax: ITax = {
+  id: 1,
+  name: "增值税",
+  country: "CN",
+  rate: 2.5,
+  date: Date.now()
+}
+
+console.log(tax)
+```
+
+>> 方案1: 直接在原接口上加个动态字段
+```
+interface ITax {
+  id: number,
+  name: string,
+  country: string,
+  [key:string]: any
+}
+```
+
+>> 方案2: 添加一个同名接口
+```
+interface ITax {
+  [key:string]: any
+}
+```
+
+>> 方案3: 写一个新的接口，继承原接口
+```
+interface ITaxNew extends ITax {
+  [key:string]: any
+}
+
+const tax: ITaxNew = {
+  id: 1,
+  name: "增值税",
+  country: "CN",
+  rate: 2.5,
+  date: Date.now()
+}
+```
+
+>> 方案4: 使用断言
+```
+const tax: ITax = {
+  id: 1,
+  name: "增值税",
+  country: "CN",
+  rate: 2.5,
+  date: Date.now()
+} as ITax
+```
+
+
+#### 13.99 总结:何时使⽤接⼝?
 1. 定义对象的格式: 描述数据模型、API 响应格式、配置对象........等等,是开发中⽤的最多 的场景。
 2. 类的契约:规定⼀个类需要实现哪些属性和⽅法。
 3. 扩展已有接⼝:⼀般⽤于扩展第三⽅库的类型, 这种特性在⼤型项⽬中可能会⽤到。
@@ -1354,6 +1482,24 @@ class Duck implements FlyInterface, SwimInterface {
 const duck = new Duck();
 duck.fly(); // 输出: 鸭⼦可以⻜
 duck.swim(); // 输出: 鸭⼦可以游泳
+```
+
+### 15.重载
+```
+function toArray(value:number): number[]
+function toArray(value:string): string[]
+function toArray(value: number | string): string[] | number[] {
+  if(typeof value === "number") {
+    return value.toString().split("").map(Number)
+  } else if(typeof value === "string") {
+    return value.split("")
+  } else {
+    throw new Error("Unsupported type: ")
+  }
+}
+
+console.log('重载-----------', toArray(234))
+console.log('重载-----------', toArray("helloworld"))
 ```
 
 ## ⼋、泛型
@@ -1533,6 +1679,7 @@ console.log(p1.toString())
 interface Person {
 	a: any
 }
+// @ts-ignore
 // Person.prototype.a = 100 // 此行会报错：Cannot add property a, object is not extensible
 // console.log(p1.a)
 ```
@@ -2139,4 +2286,226 @@ class Student {
 // 使用
 const s1 = new Student("张三");
 s1.speak(100, 200);
+```
+
+# 九、运算符
+## 9.1 1️⃣ 算术运算符（Arithmetic Operators）
+```
+运算符	名称	示例	说明
++	加法	a + b	数值相加 / 字符串拼接
+-	减法	a - b	
+*	乘法	a * b	
+/	除法	a / b	
+%	取模（余数）	a % b	
+**	幂运算	a ** b	a 的 b 次方
+++	自增	a++ 或 ++a	
+--	自减	a-- 或 --a	
++	一元正号	#NAME?	转数字
+-	一元负号	#NAME?	取负
+```
+
+## 9.2 2️⃣ 赋值运算符（Assignment Operators）
+```
+运算符	示例	等价于
+=	a = 5	
++=	a += 3	a = a + 3
+-=	a -= 3	a = a - 3
+*=	a *= 3	a = a * 3
+/=	a /= 3	a = a / 3
+%=	a %= 3	a = a % 3
+**=	a **= 3	a = a ** 3
+&&=	a &&= b	a = a && b
+`		=`
+??=	a ??= b	a = a ?? b
+```
+
+## 9.3 3️⃣ 比较运算符（Comparison Operators）
+```
+运算符	名称	示例	说明
+==	相等（宽松）	a == b	类型转换后比较
+===	严格相等	a === b	类型和值都相等
+!=	不相等（宽松）	a != b	
+!==	严格不相等	a !== b	
+>	大于	a > b	
+<	小于	a < b	
+>=	大于等于	a >= b	
+<=	小于等于	a <= b	
+in	属性存在	'key' in obj	检查对象是否有某属性
+instanceof	实例检查	obj instanceof Class	检查构造函数原型链
+```
+
+## 9.4 4️⃣ 逻辑运算符（Logical Operators）
+```
+运算符	名称	示例	说明
+&&	逻辑与	a && b	短路求值
+||		||	逻辑或
+??	空值合并	a ?? b	null 或 undefined 时返回 b（ES2020）
+!	逻辑非	!a	转布尔后取反
+```
+
+## 9.5 5️⃣ 位运算符（Bitwise Operators）
+```
+运算符	名称	示例
+&	按位与	a & b
+|	|	按位或
+^	按位异或	a ^ b
+~	按位非	~a
+<<	左移	a << b
+>>	有符号右移	a >> b
+>>>	无符号右移	a >>> b
+```
+
+## 9.6 6️⃣ 字符串运算符
+```
+运算符	示例	说明
++	"a" + "b"	字符串拼接
++=	str += "x"	拼接并赋值
+```
+
+## 9.7 7️⃣ 条件（三元）运算符
+```
+运算符	示例	说明
+? :	cond ? a : b	三元条件表达式
+```
+
+## 9.8 8️⃣ 逗号运算符
+```
+运算符	示例	说明
+,	a = 1, b = 2	从左到右执行，返回最后一个值
+```
+
+## 9.9 9️⃣ 展开运算符 / 剩余运算符（ES2015+）
+```
+运算符	示例	说明
+...	[...arr]	展开数组/对象
+...	function fn(...args)	剩余参数（Rest Parameters）
+```
+
+## 9.10 🔟 可选链操作符（ES2020）
+```
+运算符	示例	说明
+?.	obj?.prop	属性可选访问
+?.()	fn?.()	函数可选调用
+?.[]	arr?.[index]	数组/索引可选访问
+
+// 示例1:
+? 放到某个变量或者表达式的后面，再调用下一个方法之前进行判断, 如果变量或者表达式为 null 或 undefined 则会返回 undefined
+let str1:string
+str1 = (Date.now() % 2 === 0) ? "hello" : null
+// 输出结果是 hello 或者 undefined
+console.log("?表示可选链操作符 ---> ", str1?.toLowerCase())
+```
+
+## 9.11 1️⃣1️⃣ 空值合并运算符（ES2020）
+```
+运算符	示例	说明
+??	a ?? b	a 为 null 或 undefined 时返回 b
+
+// 空值合并操作符，除了 null 和 undefined，都会返回左边的值
+let var2: null | undefined | boolean | string
+var2 = false
+console.log("空值合并操作符 --------> ", var2 ?? 1)
+```
+
+## 9.12 1️⃣2️⃣ 非空断言运算符（TypeScript Only❗）(条件为假时, 运行时报错！)
+```
+运算符	示例	说明
+!	x!.prop	告诉 TS “我确定 x 不是 null/undefined”
+
+! 放到某个变量或者表达式的后面，再调用下一个方法之前进行断言, 如果变量或者表达式为 null 或 undefined 则会报错
+
+// 非空断言 !
+// 例如
+let x: string | null = null;
+console.log(x!.length); // TS 不报错，但运行时报错！
+
+let str1:string
+str1!.toUpperCase()
+```
+
+## 9.13 1️⃣3️⃣ 类型断言运算符（TypeScript Only❗）
+```
+语法	示例	说明
+as	x as string	类型断言（推荐）
+<Type>	<string>x	旧式断言（JSX 中不推荐）
+
+// 空值合并操作符，除了 null 和 undefined，都会返回左边的值
+let var2: null | undefined | boolean | string
+var2 = (Date.now() % 2 === 0) ? "hello" : false
+
+console.log("空值合并操作符 --------> ", (var2 ?? 1))
+
+const var3 = (var2 as string).toLowerCase()
+console.log("哈哈哈哈哈，报错了吧......")
+```
+
+## 9.14 1️⃣4️⃣ 其他/特殊
+```
+运算符	示例	说明
+typeof	typeof x	返回类型字符串
+void	void expr	执行表达式并返回 undefined
+delete	delete obj.prop	删除对象属性
+new	new Date()	创建实例
+yield	yield value	Generator 函数中使用
+await	await promise	等待 Promise（async 函数中）
+import()	import('./x')	动态导入（ES2020）
+```
+
+## 9.99 📊 总结表：TypeScript 运算符分类
+```
+分类	运算符举例	TS 特有？
+算术	+ - * / % ** ++ --	❌
+赋值	`= += -= *= /= ??= &&=	
+比较	== === != !== > < >= <= in instanceof	❌
+逻辑	`&&	
+位运算	`&	^ ~ << >> >>>`
+字符串	+ +=	❌
+条件	? :	❌
+逗号	,	❌
+展开/剩余	...	❌
+可选链	?. ?.() ?.[ ]	❌（ES2020）
+空值合并	??	❌（ES2020）
+非空断言	!	✅ TypeScript Only
+类型断言	as"	 "<Type>
+其他	typeof void delete new yield await import()	❌
+```
+
+# 十、关键字
+## 10.1 typeof 和 keyof
+### 10.1.1 typeof 返回值类型
+```
+类型	说明	示例
+值空间 `typeof`（JS 原生）	运行时操作符，返回字符串	typeof x === "string"
+类型空间 `typeof`（TS 特有）	编译时类型查询，返回类型	type T = typeof someValue;
+
+✅ 1.typeof 运算符的返回值类型是 string（字符串）”
+console.log(typeof 42);           // "number"
+console.log(typeof "hello");      // "string"
+console.log(typeof true);         // "boolean"
+console.log(typeof undefined);    // "undefined"
+console.log(typeof null);         // "object" ← 历史 bug
+console.log(typeof {});           // "object"
+console.log(typeof []);           // "object"
+console.log(typeof function(){}); // "function"
+console.log(typeof Symbol());     // "symbol" (ES6)
+console.log(typeof 123n);         // "bigint" (ES2020)
+
+✅ 2.但是这种情况下，可以是 type===============================================
+nterface Person1 {
+  name: string,
+  age: number
+}
+
+const p11: Person1 = {
+  name: "tom",
+  age: 300
+}
+
+type iThis = typeof p11
+function getVal(this: iThis, key: keyof iThis){
+  return this[key]
+}
+
+console.log('//////////', getVal.call(p11, "age"))
+
 ```

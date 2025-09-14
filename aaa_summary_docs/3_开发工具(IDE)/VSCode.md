@@ -73,5 +73,19 @@ https://huggingface.co/models
 ## 3.4 通用
 ### 3.4.1 Error Lens (代码错误显示)
 
+### 3.4.2 Code Runner
+```
+安装之后，在源码文件右键 --> Run Code 即可
+```
+
 # 4.设置：左下角齿轮图标 -->
 ## 4.1 settings
+
+# 5.debug
+## 5.1 前端代码 debug
+```
+1.开启源代码模式
+如果是 ts 代码，则可以在 ts.config 中将 sourceMap 配置成 true
+如果是 angular 代码，则可以在 angular.json 中将 sourceMap 配置成 true (默认就是 true)
+2.然后发布到浏览器，F12 --> sources --> 找到对应的源码文件 --> 加断点即可
+```
