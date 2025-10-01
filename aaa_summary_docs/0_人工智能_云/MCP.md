@@ -96,3 +96,10 @@ if __name__ == "__main__":
 https://pypi.org/
 
 https://www.cnblogs.com/fnng/p/18744210
+
+
+# 4.常用的 MCP
+```
+chrome mcp
+
+```
