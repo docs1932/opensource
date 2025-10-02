@@ -1,23 +1,15 @@
-
-
-# 0.bytebot
-https://docs.bytebot.ai/introduction
-
 # 1.VSCode 插件
 ## 1.1 cline
-
-# 2.ZED
-https://github.com/zed-industries/zed
+## 1.2 Roo Code
 
 # 2.Calude Code
 https://github.com/LichAmnesia/GPT-Prompt-Hub (Prompt 提示词配置在这里)
 
-# 3.Kiro
+# 3.Codex
 
-# 4.Kode
-https://github.com/shareAI-lab/Kode/blob/main/README.zh-CN.md
+# 4.Kiro
 
 # 5.Qoder (阿里)
 https://qoder.com/
 
-# 6.Trae (字节)
+# 99.其他: trae, cursor, windsurf

@@ -79,6 +79,12 @@ https://huggingface.co/models
 安装之后，在源码文件右键 --> Run Code 即可
 ```
 
+## 3.5 主题 (theme 相关)
+```
+GitHub Theme
+vscode icons
+```
+
 # 4.设置：左下角齿轮图标 -->
 ## 4.1 settings
 
