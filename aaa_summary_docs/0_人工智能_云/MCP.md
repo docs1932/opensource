@@ -99,7 +99,33 @@ https://www.cnblogs.com/fnng/p/18744210
 
 
 # 4.常用的 MCP
+## 4.1 chrome mcp
+https://developer.chrome.com/blog/chrome-devtools-mcp
+https://github.com/orgs/ChromeDevTools/repositories
 ```
-chrome mcp
+1.windows 上配置：
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--executablePath=\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\""
+      ]
+    }
+  }
+}
 
+2.linux/mac 上配置:
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["chrome-devtools-mcp@latest"]
+    }
+  }
+}
 ```

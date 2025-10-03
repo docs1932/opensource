@@ -7,7 +7,7 @@ Vibe coding
 
 MCP
 
-工作流
+工作流(n8n)
 
 AI 代码编辑器
 ```
