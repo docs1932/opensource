@@ -85,8 +85,46 @@ GitHub Theme
 vscode icons
 ```
 
+## 3.6 scss/sass 插件
+```
+选择：
+Live Sass Compiler (Glenn Marks)
+
+设置：
+https://github.com/glenn2223/vscode-live-sass-compiler/blob/HEAD/docs/settings.md
+```
+
 # 4.设置：左下角齿轮图标 -->
-## 4.1 settings
+## 4.1 settings (user 表示全局设置，workspace 表示当前工作区设置)
+```
+用户设置（User Settings）
+    ‌适用范围‌：所有工作区和项目
+    ‌存储位置‌：用户目录下（如Windows系统通常位于%USERPROFILE%\AppData\Local\Programs\Microsoft VS Code\User Settings）
+    ‌特点‌：用于配置编辑器主题、字体大小、格式化程序等全局偏好设置，适用于所有打开的项目。
+
+工作区设置（Workspace Settings）
+    ‌适用范围‌：仅当前工作区/项目
+    ‌存储位置‌：项目目录下的.vscode/settings.json文件
+    ‌特点‌：用于定制特定项目的编译配置、代码格式规则等设置，可覆盖全局设置。例如，不同项目可能使用不同版本的编译器或格式化工具。
+```
+
+### 4.1.1 设置打开文件过多时，分行展示
+```
+Workbench > Editor > Wrap Tabs: 打钩即可
+```
+
+### 4.1.2 设置字体大小
+```
+搜索 font size: 设置即可
+```
+
+### 4.1.3 左侧 tab 字体大小
+```
+ctrl+shift+p > Preferences: Open User Settings (JSON) > 
+
+"editor.fontSize": 18,
+"window.zoomLevel": 1.8,
+```
 
 # 5.debug
 ## 5.1 前端代码 debug

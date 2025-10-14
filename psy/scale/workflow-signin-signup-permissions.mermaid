@@ -1,0 +1,56 @@
+flowchart TD
+    A[用户访问页面] --> B{需要登录?}
+
+    B -->|否| C[直接访问页面]
+    B -->|是| D{是否有有效Token?}
+
+    D -->|否| E[重定向到登录页]
+    D -->|是| F{Token是否即将过期?}
+
+    F -->|是| G[自动刷新Token]
+    F -->|否| H{具备页面权限?}
+
+    G --> H
+    H -->|是| I[正常访问页面]
+    H -->|否| J[显示无权限页面]
+
+%% 注册流程
+    K[用户注册] --> L[填写注册信息]
+    L --> M{信息验证}
+    M -->|失败| L
+    M -->|成功| N[创建用户账户]
+    N --> O[跳转到登录页]
+
+%% 登录流程
+    E --> P[用户登录]
+    P --> Q[输入用户名密码]
+    Q --> R{凭证验证}
+    R -->|失败| Q
+    R -->|成功| S[获取OAuth2 Token]
+    S --> T[存储Token到安全位置<br/>localStorage/sessionStorage/cookie]
+    T --> U[重定向到目标页面]
+
+%% 登出流程
+    V[用户登出] --> W[清除本地Token]
+    W --> X[调用后端登出接口]
+    X --> Y[重定向到登录页]
+
+%% Token刷新机制
+    subgraph Token自动刷新
+        Z[Token即将过期] --> AA[使用Refresh Token<br/>请求新Access Token]
+        AA --> AB{刷新成功?}
+        AB -->|是| AC[更新本地Token存储]
+        AB -->|否| AD[清除Token并跳转登录]
+    end
+
+%% 样式定义 - 使用浅色背景
+    classDef default fill:#f0f8ff,stroke:#4682b4,stroke-width:2px,color:#000
+    classDef success fill:#f0fff0,stroke:#32cd32,stroke-width:2px,color:#000
+    classDef warning fill:#fffacd,stroke:#ffa500,stroke-width:2px,color:#000
+    classDef error fill:#ffe4e1,stroke:#dc143c,stroke-width:2px,color:#000
+    classDef process fill:#e6e6fa,stroke:#9370db,stroke-width:2px,color:#000
+
+    class C,I,O,U,Y success
+    class E,J,R,AD error
+    class F,G warning
+    class A,K,P,V,Z process

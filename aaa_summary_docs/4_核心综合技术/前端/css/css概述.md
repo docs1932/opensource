@@ -1,4 +1,23 @@
 
+# 1.概述
+
+## 1.2 css, scss, sass, less, tailwindcss
+```
+✅ 当前主流趋势
+SCSS：依然是大多数企业级项目的主流（尤其是 Angular、传统 React/Vue 项目）。
+Less：热度下降，主要遗留在 Ant Design 等特定生态。
+Tailwind CSS：近几年最火的趋势，特别是在新项目、创业公司、个人项目和部分大厂（GitHub Copilot UI、Laravel、Vercel 项目都用）。
+
+📊 从社区和招聘趋势看：
+企业项目 / 传统团队：SCSS 更稳妥。
+新项目 / 敏捷开发 / 初创公司：Tailwind CSS 更流行。
+Less：除非你必须和 Ant Design 等库紧耦合，否则很少再单独选择。
+
+✅ 总结建议
+如果你在学 Angular → 推荐 SCSS（Angular CLI 默认支持，生态成熟）。
+如果你要做 新项目 / 想快速出 UI / 不想管理样式架构 → Tailwind CSS 是更潮流的选择。
+Less 不建议新学，除非你所在团队有遗留代码或 UI 库强绑定。
+```
 
 # 2.常用属性
 ## 2.1 z-index

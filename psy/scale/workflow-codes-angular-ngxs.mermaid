@@ -1,0 +1,56 @@
+flowchart TD
+    A[🔄 App启动] --> B[AuthService.initializeAuth]
+B --> C[AuthState.CheckAuthStatus]
+C --> D{🔍 Token存在且有效?}
+D -->|✅ 是| E[AuthState.SetAuthenticated]
+D -->|❌ 否| F[AuthState.SetUnauthenticated]
+
+E --> G[👤 获取用户信息和权限]
+F --> H[📍 重定向到登录页]
+
+%% 登录流程
+I[🔐 LoginComponent] --> J[dispatchLoginAction]
+J --> K[AuthService.logincredentials]
+K --> L{🔑 登录成功?}
+L -->|✅ 是| M[dispatchLoginSuccess<br/>💾 存储Token]
+L -->|❌ 否| N[dispatchLoginFailed]
+
+M --> O[🚀 路由跳转到首页]
+N --> P[⚠️ 显示错误信息]
+
+%% Token自动刷新
+Q[🔄 Token拦截器] --> R{⏰ 检测到Token即将过期}
+R -->|✅ 是| S[dispatchRefreshToken]
+S --> T[AuthService.refreshToken]
+T --> U{🔄 刷新成功?}
+U -->|✅ 是| V[dispatchRefreshTokenSuccess<br/>🔄 更新Token]
+U -->|❌ 否| W[dispatchLogout]
+
+%% 权限守卫
+X[🧭 路由导航] --> Y[AuthGuard.canActivate]
+Y --> Z[store.dispatchCheckPermissions]
+Z --> AA{🔐 AuthState.Selector<br/>hasRequiredPermissions?}
+AA -->|✅ 是| AB[✅ 允许访问]
+AA -->|❌ 否| AC[🚫 重定向到无权限页面]
+
+%% 登出流程
+AD[👋 用户点击登出] --> AE[dispatchLogout]
+AE --> AF[AuthService.logout]
+AF --> AG[🗑️ 清除本地存储的Token]
+AG --> AH[📍 路由跳转到登录页]
+
+%% 样式定义 - 使用深色背景友好的颜色
+classDef default fill:#2d3748,stroke:#4a5568,stroke-width:2px,color:#ffffff
+classDef success fill:#22543d,stroke:#38a169,stroke-width:2px,color:#ffffff
+classDef warning fill:#744210,stroke:#d69e2e,stroke-width:2px,color:#ffffff
+classDef error fill:#742a2a,stroke:#e53e3e,stroke-width:2px,color:#ffffff
+classDef process fill:#2c5282,stroke:#3182ce,stroke-width:2px,color:#ffffff
+classDef service fill:#553c9a,stroke:#805ad5,stroke-width:2px,color:#ffffff
+classDef component fill:#234e52,stroke:#38b2ac,stroke-width:2px,color:#ffffff
+
+class C,D,E,F,Y,Z,AA state
+class B,K,T,AF service
+class I,X,AD component
+class G,O,AB,AH success
+class H,N,P,W,AC error
+class A,Q,R process

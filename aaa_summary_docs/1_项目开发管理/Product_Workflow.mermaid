@@ -1,0 +1,50 @@
+flowchart TD
+
+%% ===== 人类层（你） =====
+    A0[👤 创始人 / CEO（你）]:::human
+
+%% ===== 市场与产品阶段 =====
+A1[📊 市场调研员<br>AI Market Analyst]:::ai
+A2[🎯 产品经理<br>AI Product Manager]:::ai
+A3[🏗️ 架构师<br>AI System Architect]:::ai
+A4[🧭 项目经理<br>AI Project Manager]:::ai
+
+%% ===== 设计与开发阶段 =====
+A5[🎨 UI 工程师<br>AI UI/UX Designer]:::ai
+A6[💻 前端工程师<br>AI Frontend Developer]:::ai
+A7[⚙️ 后端工程师<br>AI Backend Developer]:::ai
+A8[☁️ DevOps 工程师<br>AI DevOps Engineer]:::ai
+A12[🧪 测试工程师<br>AI QA Engineer]:::ai
+
+%% ===== 发布与运营阶段 =====
+A9[📢 运营 / 销售<br>AI Growth & Sales]:::ai
+A10[⚖️ 法务团队<br>AI Legal Advisor]:::ai
+A11[💬 售后团队<br>AI Customer Support]:::ai
+
+%% ===== 人类层输出 =====
+Z[📈 业务增长 / 产品迭代反馈]:::output
+
+%% ===== 连接关系 =====
+A0 --> A1
+A1 --> A2
+A2 --> A3
+A2 --> A5
+A3 --> A4
+A4 --> A6
+A4 --> A7
+A5 --> A6
+A6 --> A7
+A7 --> A8
+A7 --> A12
+A8 --> A9
+A8 --> A11
+A9 --> A10
+A9 --> A11
+A11 --> A2
+A11 --> Z
+Z --> A0
+
+%% ===== 样式定义 =====
+classDef ai fill:#F3F4F6,stroke:#999,stroke-width:1px,color:#111,rx:10,ry:10;
+classDef human fill:#C6E5FF,stroke:#0369A1,stroke-width:2px,color:#111,font-weight:bold;
+classDef output fill:#DCFCE7,stroke:#16A34A,stroke-width:1.5px,color:#111;

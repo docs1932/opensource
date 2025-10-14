@@ -4,6 +4,10 @@
 https://blog.csdn.net/weixin_50670076/article/details/136444408
 https://3.jetbra.in/
 
+## 1.2 破解方案2
+https://blog.idejihuo.com/topics/jetbrains
+
+
 
 # 3.常用插件
 ## 3.1 MarsCode
