@@ -1,0 +1,63 @@
+sequenceDiagram
+    participant FE as 前端 (Angular)
+    participant Browser as 用户浏览器
+    participant BE_Controller as 后端控制器 (Start/Success Endpoint)
+    participant BE_Spring as 后端核心 (Spring Security OAuth2 Client)
+    participant HMRC_Auth as HMRC 授权服务器
+
+    Note over FE, BE_Controller: 阶段 1: 启动授权 (解决 CORS)
+
+    FE->>BE_Controller: 1. FE发起请求 (Fetch/AJAX) GET /api/hmrc/auth/start
+    activate BE_Controller
+    BE_Controller->>FE: 2. 返回 200 OK: { "redirectUrl": "/oauth2/authorization/user" }
+    deactivate BE_Controller
+
+    Note over Browser: 【URL 身份】<br/>该URL是**Spring Security**的内部认证启动端点，<br/>由Spring Security拦截后，才会跳转到HMRC。
+
+    Note over Browser: **【跨域解决点】**<br/>前端收到URL后，<br/>使用 window.location.href 进行全页面跳转，<br/>而不是AJAX，从而避免CORS错误。
+
+    FE->>Browser: 3. Angular触发全页面跳转至 BE:/oauth2/authorization/user
+
+    activate BE_Spring
+    Browser->>BE_Spring: 4. Browser hits /oauth2/authorization/user
+    BE_Spring->>HMRC_Auth: 5. BE发起 302 重定向到 HMRC Auth URL<br/>(含 client_id, scope, state)
+
+    Note over Browser: 阶段 2: 用户授权与 Token 交换
+
+    HMRC_Auth->>Browser: 6. 提示用户登录/授权界面
+    Browser->>HMRC_Auth: 7. 用户完成登录并授权
+    HMRC_Auth->>Browser: 8. HMRC 回调 BE URL<br/>/login/oauth2/code/user?code=...
+    Note over Browser: **【Code 获取点】**<br/>URL中包含授权码(Code)。
+
+    Browser->>BE_Spring: 9. Browser hits BE Callback URL (Spring Security 自动拦截)
+
+    Note over BE_Spring: **【Code 传输点】**<br/>Code 从 URL 被 BE 自动提取。
+
+    BE_Spring->>HMRC_Auth: 10. **服务器间POST** /oauth/token<br/>(使用 Code + Client Secret)
+    activate HMRC_Auth
+    HMRC_Auth->>BE_Spring: 11. 返回 Access Token, Refresh Token
+    deactivate HMRC_Auth
+    Note over BE_Spring: **【Token 获取点】**<br/>BE安全获取到 Tokens。
+
+    BE_Spring->>BE_Spring: 12. **【Token 保存点】**<br/>将 Tokens 安全地存储到数据库或 OAuth2AuthorizedClientService。
+
+    Note over FE, BE_Controller: 阶段 3: 通知前端结果
+
+    BE_Spring->>BE_Controller: 13. Spring Security 内部重定向至 /auth/success
+
+    Note over BE_Controller: **【/auth/success (后端)】**<br/>后端处理逻辑（如Token持久化）。
+
+    activate BE_Controller
+    BE_Controller->>Browser: 14. 后端再次发起 302 重定向到 FE Success URL<br/>(http://localhost:4200/auth/success)
+    deactivate BE_Controller
+
+    Browser->>FE: 15. Browser hits Angular FE route /auth/success
+
+    Note over FE: **【/auth/success (前端)**<br/>Angular渲染成功界面。
+
+    alt 授权失败路径 (用户拒绝或 Token 交换失败)
+        BE_Spring->>BE_Controller: Spring Security 内部重定向至 /auth/failure
+        BE_Controller->>Browser: 后端重定向到 FE Failure URL<br/>(http://localhost:4200/auth/failure)
+        Browser->>FE: Browser hits Angular FE route /auth/failure
+        Note over FE: **【/auth/failure (前端)】**<br/>Angular渲染失败界面。
+    end

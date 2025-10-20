@@ -1,0 +1,71 @@
+{
+  "endpoints": [
+    {
+      "name": "启动 HMRC 授权流程",
+      "method": "GET",
+      "url": "/api/hmrc/auth/start",
+      "description": "前端调用此接口以获取 HMRC 授权服务器的完整跳转地址。后端会生成 state 参数并构建完整的 URL。",
+      "入参 (Request Parameters)": {
+        "type": "Query String",
+        "parameters": [
+          {
+            "name": "client_callback_path",
+            "type": "string",
+            "required": "可选",
+            "notes": "前端期望授权成功后重定向到的内部路由路径，例如 '/app/dashboard'。后端会将此路径作为重定向目标。"
+          }
+        ]
+      },
+      "回参 (Response Body)": {
+        "type": "JSON Object (200 OK)",
+        "fields": [
+          {
+            "name": "authUrl",
+            "type": "string",
+            "description": "HMRC 授权服务器的完整 URL，前端应立即重定向到此地址。"
+          },
+          {
+            "name": "state",
+            "type": "string",
+            "description": "后端生成的 CSRF 保护状态值 (可选，可存储在 Session 中不返回前端，但为清晰列出)。"
+          }
+        ]
+      }
+    },
+    {
+      "name": "处理 HMRC 授权回调",
+      "method": "GET",
+      "url": "/api/hmrc/auth/callback",
+      "description": "此接口是 HMRC 授权成功后重定向的目标。后端接收授权码，换取 Access Token，存储后重定向到前端页面。",
+      "入参 (Request Parameters)": {
+        "type": "Query String (由 HMRC 服务器发送)",
+        "parameters": [
+          {
+            "name": "code",
+            "type": "string",
+            "required": "是",
+            "description": "HMRC 返回的授权码 (Authorization Code)。"
+          },
+          {
+            "name": "state",
+            "type": "string",
+            "required": "是",
+            "description": "用于与步骤 1 中存储的 state 进行比对，防止 CSRF 攻击。"
+          }
+        ]
+      },
+      "回参 (Response Behavior)": {
+        "type": "HTTP Redirect (302 Found)",
+        "description": "后端处理完 Token 交换和存储后，向用户浏览器发送重定向指令。",
+        "target_url": "前端应用的成功或失败页面，例如：`https://your-frontend-domain.com/auth/success`",
+        "redirect_params": [
+          {
+            "name": "status",
+            "type": "string",
+            "description": "重定向到前端时，可选携带授权结果 (success/failure)。"
+          }
+        ]
+      }
+    }
+  ]
+}

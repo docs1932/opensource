@@ -1,0 +1,47 @@
+sequenceDiagram
+    participant FE as Frontend (Angular/RxJS)
+    participant BE as Backend (Spring Boot)
+    participant HMRC_Auth as HMRC Authorization Server
+    participant Browser as User Browser
+
+    activate FE
+    FE->>BE: 1. Request Authorization URL (GET /api/hmrc/auth/start)
+    deactivate FE
+
+    activate BE
+    BE->>BE: 1.1. Generate state parameter (CSRF protection)
+    BE->>BE: 1.2. Construct HMRC Authorization URL\n(Includes client_id, redirect_uri, scope, state)
+    BE->>FE: 2. Return Authorization URL: { "authUrl": "..." }
+    deactivate BE
+
+    activate FE
+    FE->>Browser: 3. Receive URL & Trigger Browser Redirection
+    deactivate FE
+
+    Browser->>HMRC_Auth: 4. Browser Navigates to HMRC Auth URL
+
+    activate HMRC_Auth
+    HMRC_Auth->>Browser: 5. Prompt User for Login / Consent
+    Browser->>HMRC_Auth: 6. User Logs In and Grants Authorization
+    HMRC_Auth->>Browser: 7. Authorization Success, Redirect to BE Callback URL\n(URL includes code and state)
+    deactivate HMRC_Auth
+
+    Browser->>BE: 8. BE Callback Endpoint Hit (GET /api/hmrc/auth/callback?code=...&state=...)
+
+    activate BE
+    BE->>BE: 9. Validate received state parameter (Anti-CSRF/Replay)
+    BE->>HMRC_Auth: 10. Exchange Code for Token (POST /token)\n(Includes code, client_id, **client_secret**)
+
+    activate HMRC_Auth
+    HMRC_Auth->>BE: 11. Return Access Token and Refresh Token
+    deactivate HMRC_Auth
+
+    BE->>BE: 12. **Securely Store Access/Refresh Token in DB** (Link to User)
+    BE->>Browser: 13. Redirect to FE Success Page (e.g., /auth/success)
+    deactivate BE
+
+    activate FE
+    Browser->>FE: 14. Browser hits FE Success Page
+    FE->>FE: 15. Route Handles Success, User is Authorized
+    FE->>BE: 16. Subsequent Business Request (BE uses Stored Token to call HMRC API)
+    deactivate FE

@@ -1,0 +1,47 @@
+sequenceDiagram
+    participant FE as 前端 (Angular/RxJS)
+    participant BE as 后端 (Spring Boot)
+    participant HMRC_Auth as HMRC 授权服务器
+    participant Browser as 用户浏览器
+
+    activate FE
+    FE->>BE: 1. 请求授权 URL (GET /api/hmrc/auth/start)
+    deactivate FE
+
+    activate BE
+    BE->>BE: 1.1. 生成 state 参数 (防 CSRF)
+    BE->>BE: 1.2. 构造 HMRC 授权 URL\n(包含 client_id, redirect_uri, scope, state)
+    BE->>FE: 2. 返回授权 URL: { "authUrl": "..." }
+    deactivate BE
+
+    activate FE
+    FE->>Browser: 3. 接收 URL 并触发浏览器重定向
+    deactivate FE
+
+    Browser->>HMRC_Auth: 4. 浏览器访问 HMRC 授权 URL
+
+    activate HMRC_Auth
+    HMRC_Auth->>Browser: 5. 提示用户登录/授权 (Consent)
+    Browser->>HMRC_Auth: 6. 用户完成登录并授权
+    HMRC_Auth->>Browser: 7. 授权成功，重定向到 BE 回调 URL\n(URL 包含 code 和 state)
+    deactivate HMRC_Auth
+
+    Browser->>BE: 8. BE 回调接口被触发 (GET /api/hmrc/auth/callback?code=...&state=...)
+
+    activate BE
+    BE->>BE: 9. 校验 state 参数的有效性 (防重放/CSRF)
+    BE->>HMRC_Auth: 10. 使用 code、client_id、client_secret 换取 Token (POST /token)
+
+    activate HMRC_Auth
+    HMRC_Auth->>BE: 11. 返回 Access Token 和 Refresh Token
+    deactivate HMRC_Auth
+
+    BE->>BE: 12. 将 Access Token/Refresh Token 安全存储到后端数据库 (关联用户)
+    BE->>Browser: 13. 重定向到 FE 成功页面 (如 /auth/success)
+    deactivate BE
+
+    activate FE
+    Browser->>FE: 14. 浏览器访问 FE 成功页面
+    FE->>FE: 15. 路由处理，用户已完成授权
+    FE->>BE: 16. 后续业务请求，BE 使用存储的 Access Token 访问 HMRC 资源
+    deactivate FE

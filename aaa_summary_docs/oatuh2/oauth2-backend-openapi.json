@@ -1,0 +1,109 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "HMRC OAuth2 授权服务接口",
+    "version": "1.0.0",
+    "description": "用于协调前端、后端和 HMRC 授权服务器的 OAuth2 授权码模式接口。"
+  },
+  "servers": [
+    {
+      "url": "https://your-backend-domain.com/api",
+      "description": "Spring Boot 后端 API 网关"
+    }
+  ],
+  "paths": {
+    "/hmrc/auth/start": {
+      "get": {
+        "tags": ["OAuth2 授权流程"],
+        "summary": "启动 HMRC 授权流程并获取跳转 URL",
+        "description": "前端调用此接口以获取 HMRC 授权服务器的完整跳转地址。后端负责生成 state 参数并构建完整的授权 URL。",
+        "operationId": "startHMRCAuth",
+        "parameters": [
+          {
+            "name": "client_callback_path",
+            "in": "query",
+            "description": "前端期望授权成功后重定向到的内部路由路径，例如 '/app/dashboard'。",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功返回 HMRC 授权跳转 URL。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "authUrl": {
+                      "type": "string",
+                      "description": "HMRC 授权服务器的完整 URL，前端应立即重定向到此地址。"
+                    },
+                    "state": {
+                      "type": "string",
+                      "description": "（可选）后端生成的 CSRF 保护状态值。通常由后端存储在 Session 或 Redis 中。"
+                    }
+                  }
+                },
+                "examples": {
+                  "success": {
+                    "value": {
+                      "authUrl": "https://test-api.service.hmrc.gov.uk/oauth/authorize?client_id=...&redirect_uri=...&scope=...&state=...",
+                      "state": "a1b2c3d4e5f6g7h8"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hmrc/auth/callback": {
+      "get": {
+        "tags": ["OAuth2 授权流程"],
+        "summary": "处理 HMRC 授权回调",
+        "description": "此接口是 HMRC 授权成功后重定向的目标。后端接收授权码，安全地换取 Access Token、存储 Token，并最终重定向到前端页面。",
+        "operationId": "handleHMRCCallback",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "description": "HMRC 返回的授权码 (Authorization Code)。",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "用于与步骤 1 中存储的 state 进行比对，防止 CSRF 攻击。",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "授权流程完成，**服务器端重定向**到前端应用的成功或失败页面。",
+            "headers": {
+              "Location": {
+                "description": "重定向目标 URL，例如：https://your-frontend-domain.com/auth/success?status=authorized",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数错误 (如 state 不匹配或 code 无效)。"
+          }
+        }
+      }
+    }
+  }
+}
