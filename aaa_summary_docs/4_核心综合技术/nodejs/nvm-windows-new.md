@@ -37,7 +37,7 @@ https://github.com/coreybutler/nvm-windows/releases
 3.检查系统变量
 环境变量：检查是否有nvm环境变量，没有的话，加上；
 >> NVM_HOME： D:\software\software_for_develop\nvm\nvm (nvm安装路径)
->> NVM_SYMLINK： D:\software\software_for_develop\nvm\nvm (nvm自动创建的nodejs文件夹的快捷方式路径)
+>> NVM_SYMLINK： D:\software\software_for_develop\nvm\nodejs (nvm自动创建的nodejs文件夹的快捷方式路径)
 
 4.检查 PATH 是否添加nvm环境变量，没有的话，加上；
 %NVM_HOME%
