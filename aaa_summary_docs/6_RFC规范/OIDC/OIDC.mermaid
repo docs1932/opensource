@@ -1,0 +1,52 @@
+sequenceDiagram
+    participant U as 用户 (User)
+    participant FE as 客户端 (Angular/FE)
+    participant BE as 资源服务器 (Spring Boot/BE)
+    participant AS as 认证服务器 (IdP/HMRC)
+
+    autonumber
+
+    Note over U,FE: 阶段一：认证启动 (OIDC)
+
+    FE->AS: GET /authorize?response_type=code&scope=openid profile&client_id=...&redirect_uri=...&state=...
+    Note right of FE: 1. FE发起认证请求，要求返回授权码 (code)。<br/> OIDC 流程必须包含 scope=openid
+
+    AS->U: 重定向至登录/同意页面 (Login/Consent)
+    U->AS: 提交凭证并同意授权 (Grant Access)
+
+    Note over AS: 认证通过，签发授权码 (Code)
+
+    AS-->FE: HTTP 302 重定向至 redirect_uri?code=授权码&state=...
+    Note right of FE: 2. AS返回 code 和 state，FE（浏览器）捕获。
+
+    alt 阶段二：授权码交换与身份验证 (后端安全执行)
+        FE->BE: FE向BE发起登录完成请求 (或BE自动拦截)
+        Note right of FE: 3. FE将 code 传递给后端 Spring Security。
+
+        BE->AS: POST /token?grant_type=authorization_code&code=授权码&client_secret=...
+        Note right of BE: 4. BE（Spring Security）使用 code 和**敏感的 client_secret** 交换 Token。<br/>此为服务器间通信 (Back-Channel)，不会产生 CORS 问题。
+
+        AS-->BE: 响应：{"access_token": "...", "id_token": "...", "refresh_token": "..."}
+        Note right of BE: 5. AS返回 ID Token（身份证明）、Access Token（访问权限）和 Refresh Token（续期凭证）。
+
+        BE->BE: 验证 ID Token 签名、有效期等 / 存储 Access/Refresh Token
+        Note right of BE: 6. **后端验证ID Token，确认用户身份**。<br/>BE安全存储 Access Token（用于访问Resource Server）和 Refresh Token。
+
+        BE-->FE: 设置 Session Cookie / 返回自定义 JWT / 重定向至成功页
+        Note right of FE: 7. BE完成认证，返回 FE 应用状态，用户现在对BE来说是已认证状态。
+    end
+
+    Note over U,FE: 阶段三：访问用户声明 (Userinfo) 与受保护资源
+
+    FE->BE: GET /api/data (携带 Session Cookie 或自定义 JWT)
+    Note right of FE: 8. FE访问受BE保护的API。
+
+    opt 获取更多用户声明 (Userinfo Endpoint)
+        BE->AS: GET /userinfo (携带 Access Token 作为 Bearer Token)
+        Note right of BE: 9. **OIDC 特有步骤**：BE使用 Access Token 请求 Userinfo Endpoint <br/>以获取用户更多的标准化声明 (Claims)。
+        AS-->BE: 响应：{"sub": "...", "name": "...", "email": "...", ...}
+        Note right of BE: 10. BE获取用户详细信息。
+    end
+
+    BE-->FE: 返回业务数据 (Data)
+    Note right of FE: 11. 流程完成。
