@@ -1,0 +1,50 @@
+graph TD
+    subgraph A[Web Application / Microservice Frontend 'Client']
+        A1[用户尝试访问受保护资源] --> A2{检查本地Session/Token?};
+        A2 -- 否 --> A3[重定向到 Keycloak 认证端点 'Authorization Endpoint'];
+        A2 -- 是 --> R1;
+    end
+
+    subgraph B[Keycloak 'Identity Provider']
+        B1[接收到认证请求] --> B2[Keycloak 登录页];
+        B2 -->|用户输入凭证| B3{验证凭证};
+        B3 -- 成功 --> B4[生成 ID Token & Access Token];
+        B4 --> B5[重定向用户回 Client 带 Authorization Code];
+    end
+
+    subgraph C[Web Application / Microservice Frontend 'Client']
+        C1[接收到 Authorization Code] --> C2[Client 通过后端信道向 Token Endpoint 发送 Code];
+    end
+
+    subgraph D[Keycloak 'Identity Provider']
+        D1[接收 Code] --> D2{验证 Code, Client ID, Secret};
+        D2 -- 成功 --> D3[返回 ID Token, Access Token, Refresh Token];
+    end
+
+    subgraph E[Web Application / Microservice Frontend 'Client']
+        E1[接收 Token] --> E2[存储 Token '如 Session/Cookie/Local Storage'];
+        E2 --> E3[构建受保护 API 请求 '携带 Access Token'];
+    end
+
+    subgraph F[Microservice Backend 'Resource Server']
+        F1[接收到带 Token 的请求] --> F2{验证 Access Token 有效性/签名};
+        F2 -- 验证通过 --> F3[授权并返回受保护资源];
+    end
+
+    A1
+    A3 --> B1;
+    B5 --> C1;
+    C2 --> D1;
+    D3 --> E1;
+    E3 --> F1;
+    F2 -- 验证失败 --> E4[返回 401 UnAuthorized];
+    F3 --> R1[用户获得资源];
+    E4 --> A1;
+
+    style A fill:#e0f7fa,stroke:#00bcd4,stroke-width:2px
+    style B fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    style C fill:#e0f7fa,stroke:#00bcd4,stroke-width:2px
+    style D fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    style E fill:#e0f7fa,stroke:#00bcd4,stroke-width:2px
+    style F fill:#f1f8e9,stroke:#4caf50,stroke-width:2px
+    style R1 fill:#c8e6c9,stroke:#388e3c
