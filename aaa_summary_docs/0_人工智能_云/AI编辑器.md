@@ -267,6 +267,12 @@ Claude Code默认使用3456端口，如果冲突，可以通过修改 ~/.claude/
 # 5.qwen-code (阿里)
 https://platform.iflow.cn/cli/quickstart (心流)
 
+# 6.open code
+https://opencode.ai/download
+
+# 7.zed
+https://zed.dev/
+
 
 
 https://qwenlm.github.io/qwen-code-docs/zh/
