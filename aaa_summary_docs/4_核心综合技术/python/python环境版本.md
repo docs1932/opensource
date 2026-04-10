@@ -47,7 +47,9 @@ uv run main.py
 https://github.com/modelcontextprotocol/python-sdk
 ```
 1.安装指定版本的 python
- uv python install 3.13
+ uv python install 3.13 
+ 或者
+ uv python install 3.13 --directory D:\software\python\3.13\python
 2.切换到工程目录
 CD D:\0000_AI\MCP\MCP_servers\zx_mcp_server_1
 3.初始化环境
