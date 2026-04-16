@@ -2,6 +2,7 @@
 # 官网以及各种资源
 https://code.claude.com/docs/zh-CN/quickstart
 https://platform.claude.com/docs/zh-CN/home
+https://anthropic.skilljar.com/ (官方课程)
 
 # 1.安装下载
 ## 1.1 安装下载 Claude Code 客户端
