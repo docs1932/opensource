@@ -18,6 +18,8 @@ npm install -g @anthropic-ai/claude-code@latest
 ```
 
 ## 1.2 配置 claude code: C:\Users\{current user name}\.claude\settings.json
+```"hasCompletedOnboarding": true是用于绕过校验的```
+
 ```
 {
   "env": {
@@ -81,4 +83,17 @@ npm install -g @musistudio/claude-code-router
 
 # 6.如果修改了模型，则需要重启
 输入 ccr restart 重启
+```
+
+# 3.使用技巧
+最佳实践：
+https://code.claude.com/docs/zh-CN/best-practices
+## 3.1 常用概念
+### 3.1.1 claude code 的几种模式
+```
+使用快捷键 shift + tab 键切换模式：
+
+？for shortcuts --〉 修改前一定询问用户
+accept edits on 自动修改文件
+plan mode on --》只讨论，不修改文件
 ```
