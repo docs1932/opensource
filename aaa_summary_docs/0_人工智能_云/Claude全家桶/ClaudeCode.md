@@ -1,5 +1,6 @@
 
 # 官网以及各种资源
+https://github.com/luongnv89/claude-howto/blob/main/zh/README.md (推荐，已 fork)
 https://code.claude.com/docs/zh-CN/quickstart
 https://platform.claude.com/docs/zh-CN/home
 https://anthropic.skilljar.com/ (官方课程)
@@ -89,7 +90,18 @@ npm install -g @musistudio/claude-code-router
 最佳实践：
 https://code.claude.com/docs/zh-CN/best-practices
 ## 3.1 常用概念
-### 3.1.1 claude code 的几种模式
+# 3.1.1 关键命令
+```
+1.裸奔启动，跳过权限确认，启动参数：
+claude --dangerously-skip-permissions
+
+2.恢复历史绘画继续操作
+/resume
+
+99.快捷键 Shift + Tab：切换模式，见下文
+```
+
+### 3.1.2 claude code 的几种模式
 ```
 使用快捷键 shift + tab 键切换模式：
 
@@ -97,3 +109,70 @@ https://code.claude.com/docs/zh-CN/best-practices
 accept edits on 自动修改文件
 plan mode on --》只讨论，不修改文件
 ```
+
+
+# 4.各种推荐
+
+## 4.0 权威推荐
+### 4.0.1 MinMax AI skills
+https://github.com/MiniMax-AI/skills 
+
+> easy-vibe
+https://github.com/datawhalechina/easy-vibe/blob/main/docs-readme/zh-CN/README.md
+
+
+> 生成视频
+https://github.com/heygen-com/hyperframes
+
+> 多 agent 并行
+https://github.com/unohee/OpenSwarm
+
+# 4.1  skills 推荐
+> 优化 Claude code
+https://github.com/forrestchang/andrej-karpathy-skills/blob/main/README.zh.md
+
+> 小而美 ｜ 一人公司 skills https://gumroad.com/
+https://github.com/slavingia/skills
+
+> ai 工程团队｜生产力翻倍
+https://github.com/garrytan/gstack
+
+> superpowers: agent skills 框架
+ 
+
+> everything claude code:  claude code 终极优化套件，提升编程效率
+https://github.com/affaan-m/everything-claude-code/blob/main/README.zh-CN.md
+
+> deer-flow：超级智能体调度
+> 牛马 skills https://github.com/ffanglaili/awesome-niuma-skills
+
+# 4.2 爬虫｜数据采集｜浏览器自动化相关
+> 爬虫：firecrawl
+Claude code 进入后 --> /plugin --> 选择 firecrawl 即可
+
+> browser-use
+https://github.com/browser-use/browser-use
+
+> bb-browser
+https://github.com/epiral/bb-browser
+
+> chrome-mcp
+https://github.com/ChromeDevTools/chrome-devtools-mcp
+
+> agent-browser
+ 
+> find-skills
+ 
+> skill-creator
+ 
+> summarize
+ 
+> tmux: 终端环境持续控制
+ 
+> testing/e2e
+ 
+> docs/readme
+ 
+> refactor/review
+ 
+> git-workflow
