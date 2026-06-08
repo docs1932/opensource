@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<!--
+ | This is the configuration file for Maven. It can be specified at two levels:
+ |
+ |  1. User Level. This settings.xml file provides configuration for a single user, 
+ |                 and is normally provided in ${user.home}/.m2/settings.xml.
+ |
+ |                 NOTE: This location can be overridden with the CLI option:
+ |
+ |                 -s /path/to/user/settings.xml
+ |
+ |  2. Global Level. This settings.xml file provides configuration for all Maven
+ |                 users on a machine (assuming they're all using the same Maven
+ |                 installation). It's normally provided in 
+ |                 ${maven.home}/conf/settings.xml.
+ |
+ |                 NOTE: This location can be overridden with the CLI option:
+ |
+ |                 -gs /path/to/global/settings.xml
+ |
+ | The sections in this sample file are intended to give you a running start at
+ | getting the most out of your Maven installation. Where appropriate, the default
+ | values (values used when the setting is not specified) are provided.
+ |
+ |-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <!-- localRepository
+     | The path to the local repository maven will use to store artifacts.
+     |
+     | Default: ~/.m2/repository
+    <localRepository>/path/to/local/repo</localRepository>
+    -->
+	
+	<!-- maven 下载地址 https://archive.apache.org/dist/maven/maven-3/ -->
+	<!-- https://blog.csdn.net/csdn17355456893/article/details/120595168 -->
+	<!-- https://blog.csdn.net/csdn17355456893/article/details/120595168 -->
+	<!-- https://blog.csdn.net/csdn17355456893/article/details/120595168 -->
+	<!-- 本 setting.xml 是 3.6.0 版本， 2020 年之后，需要配置 mirror 为 https, 且执行命令时， 需加入下面几个命令行参数 -->
+	<!-- 本 setting.xml 是 3.6.0 版本， 2020 年之后，需要配置 mirror 为 https, 且执行命令时， 需加入下面几个命令行参数 -->
+	<!-- 本 setting.xml 是 3.6.0 版本， 2020 年之后，需要配置 mirror 为 https, 且执行命令时， 需加入下面几个命令行参数 -->
+	<!-- mvn clean compile -Dmaven.multiModuleProjectDirectory=$MAVEN_HOME -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true -->
+    <localRepository>~/.m2/repository</localRepository>
+
+    <pluginGroups>
+        <!-- pluginGroup
+         | Specifies a further group identifier to use for plugin lookup.
+        <pluginGroup>com.your.plugins</pluginGroup>
+        -->
+    </pluginGroups>
+
+    <!-- proxies
+     | This is a list of proxies which can be used on this machine to connect to the network.
+     | Unless otherwise specified (by system property or command-line switch), the first proxy
+     | specification in this list marked as active will be used.
+     |-->
+    <proxies>
+        <!-- proxy
+         | Specification for one proxy, to be used in connecting to the network.
+         |
+        <proxy>
+          <id>optional</id>
+          <active>true</active>
+          <protocol>http</protocol>
+          <username>proxyuser</username>
+          <password>proxypass</password>
+          <host>proxy.host.net</host>
+          <port>80</port>
+          <nonProxyHosts>local.net|some.host.com</nonProxyHosts>
+        </proxy>
+        -->
+    </proxies>
+
+    <!-- servers
+     | This is a list of authentication profiles, keyed by the server-id used within the system.
+     | Authentication profiles can be used whenever maven must make a connection to a remote server.
+     |-->
+    <servers>
+		<server>  
+			<id>nexus</id>  
+			<username>admin</username>  
+			<password>admin123</password>  
+		</server>
+		<server>  
+			<id>Snapshots</id>  
+			<username>admin</username>  
+			<password>admin123</password>  
+		</server>
+		<server>   
+			<id>Releases</id>   
+			<username>admin</username>   
+			<password>admin123</password>   
+		</server> 
+    </servers>
+  <mirrors>
+		<mirror>  
+		  <id>alimaven</id>  
+		  <name>aliyun maven</name>  
+		  <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+		  <mirrorOf>central</mirrorOf>          
+		</mirror> 
+		<!-- 中央仓库1 -->
+		<mirror>
+			<id>repo1</id>
+			<mirrorOf>central</mirrorOf>
+			<name>Human Readable Name for this Mirror.</name>
+			<url>http://repo1.maven.org/maven2/</url>
+		</mirror>
+
+		<!-- 中央仓库2 -->
+		<mirror>
+			<id>repo2</id>
+			<mirrorOf>central</mirrorOf>
+			<name>Human Readable Name for this Mirror.</name>
+			<url>http://repo2.maven.org/maven2/</url>
+		</mirror>
+		<mirror>  
+			<id>nexus</id>  
+			<name>nexus-private</name>  
+			<url>http://192.168.0.156:8088/repository/</url>   
+			<mirrorOf>central</mirrorOf>  
+		</mirror>  
+  </mirrors>
+
+    <profiles>
+        <profile>
+            <id>nexus</id>
+            <repositories>
+                <repository>
+                    <id>nexus</id>
+                    <name>local private nexus</name>
+                    <!--<url>*****</url>-->
+                    <!--<url>http://192.168.0.156:8088/repository/</url>-->
+					<url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>nexus</id>
+                    <name>local private nexus plugin</name>
+                    <!--<url>*****</url>-->
+                    <!--<url>http://192.168.0.156:8088/repository/</url>-->
+					<url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>nexus</activeProfile>
+    </activeProfiles>
+</settings>
