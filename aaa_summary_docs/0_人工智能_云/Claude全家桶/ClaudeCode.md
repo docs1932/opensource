@@ -46,8 +46,9 @@ npm install -g @anthropic-ai/claude-code@latest
 如果 启动 claude code 失败, 确定配置没问题之后, 可以尝试先安装下文所述的 ccr, 使用 ccr 首次进入 claude 后, 后续可以使用 claude 了
 ```
 
-# 2. 安装下载 ccr
-### 5.1.1 使用 Claude Code Router 的通用步骤:
+# 2. 安装下载其他组件
+## 2.1 ccr
+### 2.1.1 使用 Claude Code Router 的通用步骤:
 ```
 # 1.安装 Claude Code
 确保 claude code 已经安装成功
@@ -86,6 +87,10 @@ npm install -g @musistudio/claude-code-router
 输入 ccr restart 重启
 ```
 
+## 2.2 cc switch
+https://github.com/farion1231/cc-switch
+
+
 # 3.使用技巧
 最佳实践：
 https://code.claude.com/docs/zh-CN/best-practices
@@ -103,12 +108,27 @@ claude --dangerously-skip-permissions
 
 ### 3.1.2 claude code 的几种模式
 ```
-使用快捷键 shift + tab 键切换模式：
+1.裸奔启动，跳过权限确认，启动参数：
+claude --dangerously-skip-permissions
+
+2.使用快捷键 shift + tab 键切换模式：
 
 ？for shortcuts --〉 修改前一定询问用户
 accept edits on 自动修改文件
 plan mode on --》只讨论，不修改文件
 ```
+
+## 3.2 skills
+
+## 3.3 subagents
+
+## 3.4 cli
+https://github.com/topics/cli
+
+## 3.5 mcp
+
+## 3.6 hooks
+
 
 
 # 4.各种推荐

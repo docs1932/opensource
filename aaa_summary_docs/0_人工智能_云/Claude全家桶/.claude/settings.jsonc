@@ -1,0 +1,111 @@
+{
+//  "env": {
+//    "ANTHROPIC_BASE_URL": "http://127.0.0.1:15721",
+//    "ANTHROPIC_AUTH_TOKEN": "PROXY_MANAGED"
+//  },
+  "includeCoAuthoredBy": false,
+  "sandbox": {
+    "enabled": true,
+    "allowUnsandboxedCommands": false,
+    "autoAllowBashIfSandboxed": false,
+
+    "filesystem": {
+      // ⚠️ 注意：以下为新增的关键只读路径，让解释器和工具能被找到和执行
+      "allowedReadPaths": [
+        "/Users/adam/Projects",
+        "/tmp",
+
+        // --- 新增：解释器及系统级工具所需路径 ---
+        "/usr/bin",                // 系统命令，如 python3, java, node
+        "/usr/local/bin",          // 用户安装的工具，如 npm, uv, npx
+        "/usr/lib",                // 系统库
+        "/usr/local/lib",          // 用户库
+        "/Library/Java/JavaVirtualMachines", // macOS 常见 JVM 路径
+        "/opt/homebrew",           // Apple Silicon 上 Homebrew 的安装位置
+        "/usr/local/Homebrew",     // Intel Mac 上 Homebrew 的安装位置
+
+        // 若使用 nvm、pyenv、sdkman 等版本管理工具，需添加相应路径
+        "${HOME}/.nvm",
+        "${HOME}/.pyenv",
+        "${HOME}/.sdkman"
+      ],
+
+      // 写入白名单保持最小原则
+      "allowedWritePaths": [
+        "${CWD}",
+        "/tmp"
+      ],
+
+      // 黑名单不变
+      "deniedReadPaths": [
+        "${HOME}/.ssh",
+        "${HOME}/.aws",
+        "${HOME}/.config",
+        "${HOME}/.gnupg",
+        "${HOME}/.pki",
+        "${HOME}/Library/Keychains",
+        "/etc/passwd",
+        "/etc/shadow"
+      ],
+      "deniedWritePaths": [
+        "${HOME}/.bashrc",
+        "${HOME}/.zshrc",
+        "${HOME}/.bash_profile",
+        "/etc",
+        "/usr/local/bin",
+        "/boot",
+        "/System",
+        "/Applications"
+      ]
+    },
+
+    "network": {
+      "allowedDomains": [
+        "api.anthropic.com",
+        "github.com",
+        "api.github.com",
+
+        // --- 新增：包管理器源域名 ---
+        "registry.npmjs.org",         // npm
+        "pypi.org",                   // uv/pip
+        "files.pythonhosted.org",     // Python 包文件
+        "repo1.maven.org",            // Maven Central
+        "repo.maven.apache.org",      // Maven Central 镜像
+        "plugins.gradle.org",         // Gradle 插件
+        "jcenter.bintray.com"         // 旧版 JCenter
+
+        // 如果你使用阿里云、腾讯云等国内镜像，按需添加
+        // "registry.npmmirror.com"
+      ],
+
+      "deniedDomains": [
+        "*.s3.amazonaws.com",
+        "*.blob.core.windows.net",
+        "*.googleapis.com"
+      ]
+    },
+
+    "excludedCommands": [
+      "git",
+      "docker"
+      // ❌ 不要在这里加入 npm, uv, java, python
+    ]
+  },
+
+  "permissions": {
+    "permissions": {
+      "deny": [
+        "Read(~/.ssh/**)",
+        "Read(~/.aws/**)",
+        "Read(~/.config/**)",
+        "Read(~/.gnupg/**)",
+        "Read(~/.pki/**)",
+        "Read(~/Library/Keychains/**)",
+        "Edit(~/.bashrc)",
+        "Edit(~/.zshrc)",
+        "Edit(~/.bash_profile)",
+        "Edit(~/.profile)"
+      ]
+    }
+  }
+}

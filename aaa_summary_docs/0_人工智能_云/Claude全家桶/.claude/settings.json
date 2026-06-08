@@ -1,0 +1,102 @@
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://127.0.0.1:15721",
+    "ANTHROPIC_AUTH_TOKEN": "PROXY_MANAGED"
+  },
+  "includeCoAuthoredBy": false,
+  "sandbox": {
+    "enabled": true,
+    "allowUnsandboxedCommands": false,
+    "autoAllowBashIfSandboxed": false,
+
+    "filesystem": {
+      "allowedReadPaths": [
+        "/Users/adam/Projects",
+        "/tmp",
+
+        "/usr/bin",
+        "/usr/local/bin",
+        "/usr/lib",
+        "/usr/local/lib",
+        "/Library/Java/JavaVirtualMachines",
+        "/opt/homebrew",
+        "/usr/local/Homebrew",
+
+        "${HOME}/.nvm",
+        "${HOME}/.pyenv",
+        "${HOME}/.sdkman"
+      ],
+
+      "allowedWritePaths": [
+        "/Users/adam/Projects",
+        "/tmp"
+      ],
+
+      "deniedReadPaths": [
+        "${HOME}/.ssh",
+        "${HOME}/.aws",
+        "${HOME}/.config",
+        "${HOME}/.gnupg",
+        "${HOME}/.pki",
+        "${HOME}/Library/Keychains",
+        "/etc/passwd",
+        "/etc/shadow"
+      ],
+      "deniedWritePaths": [
+        "${HOME}/.bashrc",
+        "${HOME}/.zshrc",
+        "${HOME}/.bash_profile",
+        "/etc",
+        "/usr/local/bin",
+        "/boot",
+        "/System",
+        "/Applications"
+      ]
+    },
+
+    "network": {
+      "allowedDomains": [
+        "api.anthropic.com",
+        "github.com",
+        "api.github.com",
+
+        "registry.npmjs.org",
+        "pypi.org",
+        "files.pythonhosted.org",
+        "repo1.maven.org",
+        "repo.maven.apache.org",
+        "plugins.gradle.org",
+        "jcenter.bintray.com"
+
+      ],
+
+      "deniedDomains": [
+        "*.s3.amazonaws.com",
+        "*.blob.core.windows.net",
+        "*.googleapis.com"
+      ]
+    },
+
+    "excludedCommands": [
+      "git",
+      "docker"
+    ]
+  },
+
+  "permissions": {
+    "permissions": {
+      "deny": [
+        "Read(~/.ssh/**)",
+        "Read(~/.aws/**)",
+        "Read(~/.config/**)",
+        "Read(~/.gnupg/**)",
+        "Read(~/.pki/**)",
+        "Read(~/Library/Keychains/**)",
+        "Edit(~/.bashrc)",
+        "Edit(~/.zshrc)",
+        "Edit(~/.bash_profile)",
+        "Edit(~/.profile)"
+      ]
+    }
+  }
+}
