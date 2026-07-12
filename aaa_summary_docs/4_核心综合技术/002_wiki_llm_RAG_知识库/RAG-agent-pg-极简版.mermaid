@@ -1,0 +1,65 @@
+flowchart LR
+    %% 全局样式适配深色背景
+    classDef default fill:#2d2d2d,stroke:#e0e0e0,color:#ffffff,stroke-width:1.5px
+    classDef sharedBase fill:#1a1a1a,stroke:#ffd700,color:#ffffff,stroke-width:3px
+    classDef cnWrite fill:#0a2a43,stroke:#4fc3f7,color:#e3f2fd,stroke-width:2px
+    classDef cnRead fill:#1a3a2a,stroke:#81c784,color:#e8f5e9,stroke-width:2px
+    classDef enWrite fill:#3a2a1a,stroke:#ffb74d,color:#fff3e0,stroke-width:2px
+    classDef enRead fill:#3a1a2a,stroke:#f48fb1,color:#fce4ec,stroke-width:2px
+
+    %% 全局共享层定义
+    subgraph 全PG共享底座 Full PG Shared Base
+        PG1[PostgreSQL + pgvector 向量库]
+        PG2[业务元数据表 Business Metadata Table]
+    end
+
+    %% 上半区：中文极简RAG+Agent链路
+    subgraph 中文_极简RAG离线写入链路
+        W1[原始文档入库<br>支持PDF/Word/TXT] --> W2[文本清洗去重<br>基础格式标准化]
+        W2 --> W3[文本切片<br>固定长度语义切分]
+        W3 --> W4[生成文档Embedding<br>模型：nomic-embed-text]
+        W4 --> W5[写入PG + pgvector<br>构建基础ANN索引]
+        W5 --> W6[索引就绪可提供检索服务]
+        W6 --> PG1
+    end
+
+    subgraph 中文_极简RAG+Agent在线读取链路
+        R1[用户输入Query] --> R2[生成Query Embedding<br>复用文档侧同Embedding模型]
+        R2 --> R3[Agent意图分类调度<br>判断是否需要工具调用]
+        R3 -->|纯知识库问答| R4[PG + pgvector相似度检索<br>召回Top-K相关文档片段]
+        R3 -->|需业务操作| R7[调用内部工具接口<br>如OA/报表系统]
+        R4 --> R5[召回片段拼接进Prompt]
+        R7 --> R5
+        R5 --> R6[调用大模型生成回答<br>模型：Qwen2.5-7B/GPT-4o-mini]
+        R6 --> R8[返回最终结果给用户]
+        R4 --> PG1
+    end
+
+    %% 下半区：英文极简RAG+Agent链路
+    subgraph English_Simple_RAG_Offline_Write_Pipeline
+        EW1[Raw Document Ingestion<br>Support PDF/Word/TXT] --> EW2[Text Cleaning & Deduplication<br>Basic Format Standardization]
+        EW2 --> EW3[Text Chunking<br>Fixed-length Semantic Split]
+        EW3 --> EW4[Generate Document Embedding<br>Model: nomic-embed-text]
+        EW4 --> EW5[Write to PG + pgvector<br>Build Basic ANN Index]
+        EW5 --> EW6[Index Ready for Retrieval Service]
+        EW6 --> PG1
+    end
+
+    subgraph English_Simple_RAG+Agent_Online_Read_Pipeline
+        ER1[User Input Query] --> ER2[Generate Query Embedding<br>Reuse Same Embedding Model from Doc Side]
+        ER2 --> ER3[Agent Intent Classification<br>Judge Tool Call Requirement]
+        ER3 -->|Pure KB QA| ER4[PG + pgvector Similarity Search<br>Retrieve Top-K Relevant Document Chunks]
+        ER3 -->|Operation Required| ER7[Call Internal Tool APIs<br>e.g. OA/Report System]
+        ER4 --> ER5[Concatenate Chunks into Prompt]
+        ER7 --> ER5
+        ER5 --> ER6[Call LLM to Generate Answer<br>Model: Llama 3-7B/GPT-4o-mini]
+        ER6 --> ER8[Return Final Result to User]
+        ER4 --> PG1
+    end
+
+    %% 应用自定义深色样式
+    class 全PG共享底座 sharedBase
+    class 中文_极简RAG离线写入链路 cnWrite
+    class 中文_极简RAG+Agent在线读取链路 cnRead
+    class English_Simple_RAG_Offline_Write_Pipeline enWrite
+    class English_Simple_RAG+Agent_Online_Read_Pipeline enRead

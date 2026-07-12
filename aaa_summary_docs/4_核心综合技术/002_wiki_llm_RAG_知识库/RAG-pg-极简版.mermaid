@@ -1,0 +1,34 @@
+flowchart LR
+    %% 上半区：中文极简RAG链路
+    subgraph 中文_极简RAG离线写入链路
+        W1[原始文档入库<br>支持PDF/Word/TXT] --> W2[文本清洗去重<br>基础格式标准化]
+        W2 --> W3[文本切片<br>固定长度语义切分]
+        W3 --> W4[生成文档Embedding<br>模型：nomic-embed-text]
+        W4 --> W5[写入PG + pgvector<br>构建基础ANN索引]
+        W5 --> W6[索引就绪可提供检索服务]
+    end
+
+    subgraph 中文_极简RAG在线读取链路
+        R1[用户输入Query] --> R2[生成Query Embedding<br>复用文档侧同Embedding模型]
+        R2 --> R3[PG + pgvector相似度检索<br>召回Top-K相关文档片段]
+        R3 --> R4[召回片段拼接进Prompt]
+        R4 --> R5[调用大模型生成回答<br>模型：Qwen2.5-7B/GPT-4o-mini]
+        R5 --> R6[返回最终结果给用户]
+    end
+
+    %% 下半区：英文极简RAG链路
+    subgraph English_Simple_RAG_Offline_Write_Pipeline
+        EW1[Raw Document Ingestion<br>Support PDF/Word/TXT] --> EW2[Text Cleaning & Deduplication<br>Basic Format Standardization]
+        EW2 --> EW3[Text Chunking<br>Fixed-length Semantic Split]
+        EW3 --> EW4[Generate Document Embedding<br>Model: nomic-embed-text]
+        EW4 --> EW5[Write to PG + pgvector<br>Build Basic ANN Index]
+        EW5 --> EW6[Index Ready for Retrieval Service]
+    end
+
+    subgraph English_Simple_RAG_Online_Read_Pipeline
+        ER1[User Input Query] --> ER2[Generate Query Embedding<br>Reuse Same Embedding Model from Doc Side]
+        ER2 --> ER3[PG + pgvector Similarity Search<br>Retrieve Top-K Relevant Document Chunks]
+        ER3 --> ER4[Concatenate Chunks into Prompt]
+        ER4 --> ER5[Call LLM to Generate Answer<br>Model: Llama 3-7B/GPT-4o-mini]
+        ER5 --> ER6[Return Final Result to User]
+    end
