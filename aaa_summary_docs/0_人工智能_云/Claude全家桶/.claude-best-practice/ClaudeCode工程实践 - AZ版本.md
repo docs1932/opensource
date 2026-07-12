@@ -62,6 +62,7 @@ aaa_summary_docs/0_人工智能_云/Claude全家桶/.claude/CLAUDE.md
 
 
 # 49. Spec 驱动编程
+Claude code 的 dynamic workflow
 https://github.com/Fission-AI/OpenSpec (轻量级)
 https://github.com/github/spec-kit (工程级)
 

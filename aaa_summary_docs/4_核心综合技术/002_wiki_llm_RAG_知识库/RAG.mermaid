@@ -1,0 +1,52 @@
+flowchart LR
+    %% 上半区：中文链路
+    subgraph 中文_数据写入链路_离线异步
+        W1[原始数据入库<br>文档/日志/知识库<br>技术：OSS/MySQL/Elasticsearch] --> W2[数据清洗预处理<br>去重/格式标准化<br>技术：Python Pandas/Spark/正则表达式]
+        W2 --> W3[数据切片<br>长文本语义切分<br>继承元数据生成唯一ID<br>技术：LangChain RecursiveCharacterTextSplitter<br>模型：Llama 3/Qwen2 语义切分模型]
+        W3 --> W4[三路并行处理]
+        W4 --> W5[向量分支<br>生成文本Embedding<br>写入向量库<br>构建HNSW ANN索引<br>技术：FAISS/Milvus/Weaviate<br>模型：nomic-embed-text/BGE-M3/Jina-v5/text-embedding-3-large<br>✅ 专属部署：Ollama一键拉取模型，支持Matryoshka维度动态裁剪]
+        W4 --> W6[关键词分支<br>生成BM25倒排索引<br>存入全文检索引擎<br>技术：Elasticsearch/Lucene]
+        W4 --> W7[知识图谱分支<br>实体抽取/关系链接<br>写入图数据库<br>技术：Neo4j/OpenNLP<br>模型：ERNIE-Bot 实体关系抽取模型]
+        W5 & W6 & W7 --> W8[全量索引校验<br>一致性校验完成<br>技术：校验脚本/数据比对工具]
+        W8 --> W9[索引对外可服务<br>技术：API网关/负载均衡]
+    end
+
+    subgraph 中文_数据读取链路_在线实时
+        R1[用户输入Query] --> R2[意图识别<br>分类用户真实诉求<br>技术：文本分类框架<br>模型：BERT-base/IntentBERT/Qwen2 微调模型]
+        R2 --> R3[查询重写<br>消歧/补全/生成优化检索式<br>技术：提示词工程<br>模型：GPT-4o-mini/Qwen3-7B/DeepSeek-R1]
+        R3 --> R4[多路召回触发]
+        R4 --> R5[语义向量召回<br>Query生成Embedding<br>向量库ANN检索<br>技术：向量检索SDK<br>模型：nomic-embed-text/BGE-small-zh/SimCSE<br>✅ 专属部署：复用写入侧同模型实例，保证向量空间完全对齐，避免分布偏移]
+        R4 --> R6[关键词召回<br>倒排索引BM25匹配<br>技术：Elasticsearch DSL查询]
+        R4 --> R7[知识图谱关联召回<br>实体关联扩展检索<br>技术：Cypher查询语言]
+        R5 & R6 & R7 --> R8[候选集融合去重<br>得到Top-K粗筛结果<br>技术：加权融合算法/布隆过滤器]
+        R8 --> R9[重排序<br>深度语义模型精细打分<br>技术：LightGBM/CrossEncoder<br>模型：BERT-reranker/M3E-reranker]
+        R9 --> R10[结果过滤<br>权限/时效性校验<br>技术：规则引擎/权限中间件]
+        R10 --> R11[从原始文档库取对应片段<br>技术：文档数据库查询]
+        R11 --> R12[整理格式化返回给用户<br>技术：大模型摘要生成<br>模型：Qwen2.5-7B/Gemini-Flash]
+    end
+
+    %% 下半区：英文链路
+    subgraph English_Data_Write_Pipeline_Offline
+        EW1[Raw Data Ingestion<br>Doc/Log/Knowledge Base<br>Tech: OSS/MySQL/Elasticsearch] --> EW2[Data Cleaning<br>Dedupe/Format Standardization<br>Tech: Python Pandas/Spark/Regex]
+        EW2 --> EW3[Data Chunking<br>Semantic Split Long Text<br>Assign Unique ID with Metadata<br>Tech: LangChain RecursiveCharacterTextSplitter<br>Model: Llama 3/GPT-4o-mini Semantic Splitter]
+        EW3 --> EW4[3-Way Parallel Processing]
+        EW4 --> EW5[Vector Branch<br>Generate Text Embedding<br>Write to Vector DB<br>Build HNSW ANN Index<br>Tech: FAISS/Milvus/Weaviate<br>Model: nomic-embed-text/bge-m3/jina-v5/text-embedding-3-large<br>✅ Deploy: Ollama 1-click pull, support Matryoshka dimension pruning]
+        EW4 --> EW6[Keyword Branch<br>Build BM25 Inverted Index<br>Store in Full-Text Engine<br>Tech: Elasticsearch/Lucene]
+        EW4 --> EW7[Knowledge Graph Branch<br>Entity Extraction/Relation Linking<br>Write to Graph DB<br>Tech: Neo4j/OpenNLP<br>Model: spaCy/OpenIE Entity Relation Extractor]
+        EW5 & EW6 & EW7 --> EW8[Full Index Validation<br>Consistency Check<br>Tech: Validation Script/Data Compare Tool]
+        EW8 --> EW9[Index Ready for Service<br>Tech: API Gateway/Load Balancer]
+    end
+
+    subgraph English_Data_Read_Pipeline_Online
+        ER1[User Input Query] --> ER2[Intent Recognition<br>Classify User Real Demand<br>Tech: Text Classification Framework<br>Model: BERT-base/IntentBERT/Llama 3 Fine-tuned]
+        ER2 --> ER3[Query Rewriting<br>Disambiguate/Complete/Generate Optimized Query<br>Tech: Prompt Engineering<br>Model: GPT-4o-mini/Llama 3-7B/DeepSeek-R1]
+        ER3 --> ER4[Multi-Channel Retrieval Trigger]
+        ER4 --> ER5[Semantic Vector Retrieval<br>Generate Query Embedding<br>Vector DB ANN Search<br>Tech: Vector Retrieval SDK<br>Model: nomic-embed-text/all-MiniLM-L6-v2/SimCSE<br>✅ Deploy: Reuse same model instance from write side, ensure vector space alignment]
+        ER4 --> ER6[Keyword Retrieval<br>Inverted Index BM25 Match<br>Tech: Elasticsearch DSL Query]
+        ER4 --> ER7[Knowledge Graph Retrieval<br>Entity Linking Extended Search<br>Tech: Cypher Query Language]
+        ER5 & ER6 & ER7 --> ER8[Candidate Set Fusion & Dedupe<br>Get Top-K Coarse Results<br>Tech: Weighted Fusion/Bloom Filter]
+        ER8 --> ER9[Reranking<br>Deep Semantic Model Fine Scoring<br>Tech: LightGBM/CrossEncoder<br>Model: BERT-reranker/ms-marco-MiniLM-L-6-v2]
+        ER9 --> ER10[Result Filtering<br>Permission/Timeliness Check<br>Tech: Rule Engine/Permission Middleware]
+        ER10 --> ER11[Fetch Original Doc Snippets<br>Tech: Document DB Query]
+        ER11 --> ER12[Format & Return to User<br>Tech: LLM Summarization<br>Model: Llama 3-7B/Gemini-Flash]
+    end
