@@ -1,4 +1,8 @@
-1.下载  MySQL Community Server
+# Windows 安装 MySQL
+
+## 步骤
+
+1. 下载 MySQL Community Server
 https://dev.mysql.com/downloads/mysql/
 选择合适的版本， 下载 zip 包
 

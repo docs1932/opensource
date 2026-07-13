@@ -1,4 +1,6 @@
-0.前提: 安装了 jdk, 并配置好了 jdk 的环境变量
+# Windows 安装 Maven
+
+前提：已安装 JDK 并配置好环境变量。
 
 1.下载 maven: 建议去国内镜像源下载
 https://archive.apache.org/dist/maven/maven-3/

@@ -1,11 +1,13 @@
-# 1.概述
+# CentOS 7 安装 Python 3.10
+
+## 概述
 Python2.7.5是CentOS 7默认安装的版本;
 Python3.6.8是CentOS 7中可以通过默认repo安装到的最新版本；
 
 如果简单使用，默认的python可能已经够用，但是如果使用python3版本的话，
 还是推荐升级到3的较高版本3.7/3.8/3.9/3.10/3.11...（不推荐3.6）。
 
-# 2.安装过程
+## 安装过程
 官方源码包下载地址：https://www.python.org/downloads/source/
 <注意：python3.7后使用ssl需要高版本的openssl支持，
 centos7.9默认1.0.2k-fips版本已经不支持，
@@ -34,7 +36,7 @@ source /etc/profile
 ### 2.5.2 临时加入
 export PATH=/usr/local/python310/bin:$PATH
 
-# 3.检查python版本
+## 检查 Python 版本
 python3 -V
 
 ## 3.1 安装 openssl (Can't connect to HTTPS URL because the SSL module is not available.)
@@ -70,7 +72,7 @@ echo 'export PATH=/usr/local/python310/bin:$PATH' >> /etc/profile
 source /etc/profile
 ```
 
-## 4.超实用卸载python3:
+## 卸载 Python 3
 ```
 1、卸载python3
 rpm -qa|grep python3|xargs rpm -ev --allmatches --nodeps
@@ -101,4 +103,3 @@ pip3 install paddlespeech -i http://mirrors.aliyun.com/pypi/simple --trusted-hos
 
 
 # 99.常见问题
-

@@ -1,4 +1,6 @@
-#1.maven 的 maven home directory 经常自动改回去：
+# IDEA 配置 Maven
+
+## Maven Home Directory 经常自动改回去
 Idea 2020.2版本之后，无法设置maven home directory为自定义的地址（设置之后每次打开设置还是原来的地址），
 如果想设置为自己的地址，可以将.mvn/wrapper/maven-wrapper.properties删掉，之后就能设置为自己的地址。
 
