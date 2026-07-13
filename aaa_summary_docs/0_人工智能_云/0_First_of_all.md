@@ -4,7 +4,8 @@
 建设自己的 AI 工作团队：
 
 
-
+如果是应用开发：
+神经网络，transform, moe 架构
 ```
 
 # 1.几个概念
@@ -13,7 +14,7 @@ Vibe coding
 
 MCP
 
-工作流(n8n)
+workflow 工作流(n8n)
 
 AI 代码编辑器
 ```
