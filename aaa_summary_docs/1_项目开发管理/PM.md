@@ -16,6 +16,7 @@ https://github.com/makeplane/plane
 ### 2.2.1 原型图，流程图
 ```
 figma (流程图，原型图)
+pencil
 penpot (流程图，原型图)
 ```
 

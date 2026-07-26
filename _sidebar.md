@@ -52,5 +52,5 @@
   - [软件下载使用](ddd_软件下载使用/google.md)
 
 - 外部资料摘要
-  - [芋道](yudao/README.md)
+  - [芋道](aaa_summary_docs/5_公共技术_开源/芋道/README.md)
   - [联系我](ContactMe.md)
