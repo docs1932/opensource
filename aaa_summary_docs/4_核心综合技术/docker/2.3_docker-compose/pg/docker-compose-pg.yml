@@ -1,0 +1,51 @@
+version: '3.8'
+
+# comment: 直接修改pgAdmin的连接配置，不需要改任何其他代码或重启容器：
+#
+#    Host name/address 把 127.0.0.1 替换成 postgres
+#    Port： 5432
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+      - "25432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: default_db
+    volumes:
+      # 适配PG18+官方推荐挂载方式，自动生成版本号子目录
+      - /Users/adam/docker_all/postgres:/var/lib/postgresql
+      # 提前预配置允许Docker网段访问，避免手动改pg_hba.conf
+      - /Users/adam/docker_all/postgres/pg_hba.conf:/var/lib/postgresql/18/main/pg_hba.conf
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - pg-net
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    restart: unless-stopped
+    ports:
+      - "25433:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@outlook.com
+      PGADMIN_DEFAULT_PASSWORD: 123456
+    volumes:
+      - /Users/adam/docker_all/pgadmin:/var/lib/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - pg-net
+
+networks:
+  pg-net:
+    driver: bridge

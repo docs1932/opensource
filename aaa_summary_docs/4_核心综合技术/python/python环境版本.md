@@ -1,7 +1,7 @@
 
 # 1.概述
 
-## 1.99 版本管理工具 (uv, poetry, PDM, pip, pip3)
+# 99. 版本管理工具 (uv, poetry, PDM, pip, pip3)
 
 ```
 原始的样子：
@@ -15,7 +15,7 @@ edit pyproject.toml
 pip install -e .
 ```
 
-### 1.99.1 uv (热度较高)
+## 99.1 uv (热度较高)
 https://docs.astral.sh/uv/
 ```
 1.windows 上安装 uv
@@ -34,7 +34,7 @@ rm $HOME\.local\bin\uv.exe
 rm $HOME\.local\bin\uvx.exe
 ```
 
-#### 1.99.1.1 拿到一个基于 uv 创建的工程，该如何创建环境呢？
+### 99.1.1 拿到一个基于 uv 创建的工程，该如何创建环境呢？
 ```
 1.进入项目目录下，执行下述命令即可
 uv sync
@@ -43,7 +43,7 @@ uv run main.py
 (传统模式，需要先激活环境：source .venv/bin/activate, 然后运行程序：python main.py)
 ```
 
-#### 1.99.1.2 使用 uv 创建一个工程
+### 99.1.2 使用 uv 创建一个工程
 https://github.com/modelcontextprotocol/python-sdk
 ```
 1.安装指定版本的 python
@@ -159,7 +159,7 @@ http://127.0.0.1:8000
 5.输入指令，例如：将可以在对话框中看到使用了我们的自定义 mcp server
 计算 25+65 的值
 ```
-#### 1.99.1.3 打包运行一个工程
+### 99.1.3 打包运行一个工程
 ```
 1.在 project.toml 中添加
 
@@ -171,6 +171,20 @@ D:\0000_AI\MCP\MCP_servers\zx_mcp_server_1\dist\zx_mcp_server_1-0.1.0-py3-none-a
 
 3.也可以本地使用一下试试
 uv tool install D:\0000_AI\MCP\MCP_servers\zx_mcp_server_1\dist\zx_mcp_server_1-0.1.0-py3-none-any.whl
+```
+
+### 99.1.4 拿到一个非 uv 管理的工程，如何处理呢？
+```
+1.git clone https://github.com/jwadow/kiro-gateway.git
+2.cd kiro-gateway
+3.cp .env.example .env
+4.Change the variables:
+
+5.uv init
+6.uv add -r requirements.txt
+7.uv lock
+8.uv sync
+9.uv run python main.py
 ```
 
 # 2.想要运行一个 python 程序，通常要解决 2 个问题
