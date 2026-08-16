@@ -1,0 +1,118 @@
+# ⚠️【模板适配 · 必须处理】
+# 本工作流在 PR 合并后推送【飞书】卡片通知。
+# 使用前：
+#   1. 在 GitHub 仓库 Settings → Secrets 中新增 `FEISHU_WEBHOOK`
+#      值为你的飞书群自定义机器人 Webhook 地址
+#   2. 若你的团队不用飞书，按本文件结构替换消息体与通知目标
+#      （企微/钉钉/邮件/Slack 都是同一个 curl POST 模式）
+name: Notify Feishu on PR Merge
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  notify:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Feishu notification
+        env:
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          REPO_NAME: ${{ github.repository }}
+          MERGED_BY: ${{ github.event.pull_request.merged_by.login }}
+        run: |
+          curl -X POST "${FEISHU_WEBHOOK}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "msg_type": "interactive",
+              "card": {
+                "config": {
+                  "wide_screen_mode": true
+                },
+                "header": {
+                  "title": {
+                    "tag": "plain_text",
+                    "content": "✅ PR 已合并"
+                  },
+                  "template": "green"
+                },
+                "elements": [
+                  {
+                    "tag": "div",
+                    "fields": [
+                      {
+                        "is_short": true,
+                        "text": {
+                          "tag": "lark_md",
+                          "content": "**仓库：**\n'"${REPO_NAME}"'"
+                        }
+                      },
+                      {
+                        "is_short": true,
+                        "text": {
+                          "tag": "lark_md",
+                          "content": "**PR 编号：**\n[#'"${PR_NUMBER}"']('"${PR_URL}"')"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "div",
+                    "fields": [
+                      {
+                        "is_short": true,
+                        "text": {
+                          "tag": "lark_md",
+                          "content": "**标题：**\n'"${PR_TITLE}"'"
+                        }
+                      },
+                      {
+                        "is_short": true,
+                        "text": {
+                          "tag": "lark_md",
+                          "content": "**作者：**\n@'"${PR_AUTHOR}"'"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "div",
+                    "fields": [
+                      {
+                        "is_short": true,
+                        "text": {
+                          "tag": "lark_md",
+                          "content": "**合并者：**\n@'"${MERGED_BY}"'"
+                        }
+                      },
+                      {
+                        "is_short": false,
+                        "text": {
+                          "tag": "lark_md",
+                          "content": " "
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "action",
+                    "actions": [
+                      {
+                        "tag": "button",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "查看 PR"
+                        },
+                        "url": "'"${PR_URL}"'",
+                        "type": "primary"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }'

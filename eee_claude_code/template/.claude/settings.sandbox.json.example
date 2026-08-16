@@ -1,0 +1,50 @@
+{
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "allowUnsandboxedCommands": false,
+    "network": {
+      "allowedDomains": [
+        "api.anthropic.com",
+        "github.com",
+        "*.github.com",
+        "api.github.com",
+        "registry.npmjs.org",
+        "registry.yarnpkg.com",
+        "registry.npmjs.com",
+        "repo1.maven.org",
+        "pypi.org",
+        "files.pythonhosted.org",
+        "proxy.golang.org"
+      ],
+      "allowLocalBinding": true
+    }
+  },
+  "permissions": {
+    "deny": [
+      "Read(./.entire/metadata/**)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.kube/**)",
+      "Read(~/.docker/**)",
+      "Read(~/.config/gh/hosts.yml)",
+      "Read(~/.gnupg/**)",
+      "Read(~/.netrc)",
+      "Read(~/.pypirc)",
+      "Read(~/.npmrc)",
+      "Read(~/.cargo/credentials.toml)",
+      "Read(~/.gitconfig)",
+      "Read(~/.zshrc)",
+      "Read(~/.bashrc)",
+      "Read(~/.zprofile)",
+      "Read(~/.zshenv)",
+      "Read(/.env)",
+      "Edit(~/.ssh/**)",
+      "Edit(~/.gitconfig)",
+      "Edit(~/.zshrc)",
+      "Edit(~/.bashrc)",
+      "Edit(~/.zprofile)",
+      "Edit(~/.zshenv)"
+    ]
+  }
+}

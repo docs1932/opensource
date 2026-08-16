@@ -1,0 +1,195 @@
+<!-- ============================================================
+  ⚠️【模板适配 · 必须处理】
+  本文件是 CLAUDE.md 的可迁移模板，来源于 custom-claude-template 项目。
+  使用方法：
+  1. 将本文件复制到你新工程的根目录，并重命名为 `CLAUDE.md`
+  2. 搜索并替换所有 `{{XXX}}` 占位符（你的项目信息）
+  3. 对照下方每节注释，改写"技术铁律"为你项目真实的约定
+  4. 删除本注释块
+  ============================================================ -->
+
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+<!--
+  ─────────────────────────────────────────────
+  本节必须替换：你的项目名称、一句话业务描述
+  ─────────────────────────────────────────────
+-->
+## 项目概述
+
+{{PROJECT_NAME}}（{{PROJECT_NAME_EN}}）— {{一句话业务描述，例如"实验室耗材商城，支持四级分类、动态属性、多规格 SKU"}}。
+
+## 架构概览
+
+<!--
+  ─────────────────────────────────────────────
+  本节必须替换：改成你项目的真实目录结构。
+  保持"每个目录一行 + 注释"的格式，Claude 靠它理解代码在哪。
+  ─────────────────────────────────────────────
+-->
+**{{MONOREPO_OR_SINGLE}}结构**，后端 {{BACKEND_STACK，如 Java 17 + Spring Boot 3.5（Maven 多模块）}} + 前端 {{FRONTEND_STACK，如 pnpm workspace}}：
+
+```
+{{BACKEND_ROOT}}/                  # {{后端说明}}
+  {{MODULE_DOMAIN}}/               # {{Entity/Repository 等}}
+  {{MODULE_INFRA}}/                # {{基础设施客户端}}
+  {{MODULE_SERVICE}}/              # {{业务逻辑}}
+  {{MODULE_API}}/                  # {{Controller、入口}}
+{{FRONTEND_ROOT}}/
+  shared/                          # 共享类型（{{类型包名}}）
+  {{ADMIN_APP}}/                   # 运营后台 B 端：{{技术栈}}
+  {{STOREFRONT_APP}}/              # 用户端：{{技术栈}}
+infra/                             # Docker Compose（{{中间件清单}}）
+scripts/
+  db/                             # 数据库迁移脚本（{{命名规范，如 V1__init_schema.sql}}）
+  es/                             # {{ES 索引脚本（如有）}}
+openspec/                          # OpenSpec 规格文档（spec-driven 工作流）
+```
+
+## 常用命令
+
+<!--
+  ─────────────────────────────────────────────
+  本节必须替换：写出"你项目里真正在用的命令"。
+  这条最重要——Claude 每次都会先读 CLAUDE.md，命令写错会让它全程跑偏。
+  每个子类（基础设施/后端/前端/测试）都照抄这个结构。
+  ─────────────────────────────────────────────
+-->
+
+### 基础设施
+
+```bash
+# 启动所有中间件（{{列出端口映射}}）
+cd infra && cp .env.example .env && docker compose up -d
+
+# 初始化数据库（等待 postgres 健康后执行）
+docker exec -i {{PG_CONTAINER}} psql -U {{PG_USER}} -d {{PG_DB}} < scripts/db/{{V1_MIGRATION_FILE}}
+
+# 初始化 {{ES}} 索引
+./scripts/es/{{ES_SCRIPT}}
+
+# 启动监控（可选）
+cd infra && docker compose --profile monitoring up -d
+```
+
+### 后端（{{后端技术栈}}）
+
+```bash
+cd {{BACKEND_ROOT}}
+
+# 编译
+{{BUILD_COMMAND，如 mvn clean compile}}
+
+# 启动（dev profile）
+{{DEV_RUN_COMMAND，如 mvn spring-boot:run -pl api -Dspring-boot.run.profiles=dev}}
+
+# 打包
+{{PACKAGE_COMMAND，如 mvn clean package -DskipTests}}
+
+# 单个模块测试
+{{TEST_COMMAND，如 mvn test -pl service}}
+
+# 健康检查
+curl http://localhost:{{API_PORT}}/actuator/health
+
+# API 文档
+open http://localhost:{{API_PORT}}/swagger-ui.html
+```
+
+### 前端（{{前端技术栈}}）
+
+```bash
+# 安装依赖（根目录，所有子包）
+{{PKG_MANAGER，如 pnpm}} install
+
+# 运营后台 B 端（http://localhost:{{ADMIN_PORT}}）
+cd {{FRONTEND_ROOT}}/{{ADMIN_APP}} && {{PKG_MANAGER}} dev
+
+# 用户端（http://localhost:{{STOREFRONT_PORT}}）
+cd {{FRONTEND_ROOT}}/{{STOREFRONT_APP}} && {{PKG_MANAGER}} dev
+
+# 类型检查
+cd {{FRONTEND_ROOT}}/{{ADMIN_APP}} && {{PKG_MANAGER}} typecheck
+cd {{FRONTEND_ROOT}}/{{STOREFRONT_APP}} && {{PKG_MANAGER}} typecheck
+
+# Lint
+cd {{FRONTEND_ROOT}}/{{ADMIN_APP}} && {{PKG_MANAGER}} lint
+```
+
+## 后端架构约定
+
+### 分层依赖
+
+<!-- ── 必须替换：你项目的真实依赖方向 ── -->
+```
+{{api → service → domain
+api → infra
+service → infra}}
+```
+
+`{{MODULE_API}}` 是唯一可执行模块，包含 main class（`{{MAIN_CLASS_FQN}}`）。
+
+### 统一响应格式
+
+<!-- ── 必须替换：响应包装类与工厂方法 ── -->
+所有 Controller 返回 `{{RESPONSE_TYPE，如 ApiResponse<T>}}`（`{{FQN}}`），通过静态工厂方法 `ok(data)` / `fail(code, message)` 构造。
+
+### 关键技术约定
+
+<!--
+  ─────────────────────────────────────────────
+  本节必须替换：列出你项目的"铁律"。
+  格式示例（每条 = 领域：精确约束）：
+  - ORM：MyBatis-Plus；复杂查询在 mapper/**/*.xml 手写 SQL
+  - 软删除：全局 deleted 字段（1=已删除，0=正常）
+  - 认证：Sa-Token JWT 无状态，token name = satoken
+  - 注解处理：Lombok + MapStruct 顺序不可调换
+  ⚠️ 铁律越精确，Claude 写出的代码越符合项目规范
+  ─────────────────────────────────────────────
+-->
+- **{{领域1}}**：{{精确约束}}
+- **{{领域2}}**：{{精确约束}}
+- **{{领域3}}**：{{精确约束}}
+- **{{领域4}}**：{{精确约束}}
+
+### dev 环境端口（{{配置文件}}）
+
+<!-- ── 必须替换：端口表 ── -->
+| 服务 | 端口 |
+|------|------|
+| {{中间件1}} | {{端口}} |
+| {{中间件2}} | {{端口}} |
+| 后端 API | {{API_PORT}} |
+
+## 前端架构约定
+
+<!-- ── 必须替换：状态管理 / 路由 / 目录约定 ── -->
+
+### 状态管理
+
+- **{{CLIENT_STATE_LIB，如 Zustand}}**：客户端状态（{{购物车、登录态}}）
+- **{{SERVER_STATE_LIB，如 TanStack Query}}**：服务端状态（{{列表、搜索结果}}）
+- 二者职责明确分离，不混用
+
+### 路由
+
+{{路由集中管理文件路径}}，权限拦截在 {{权限组件路径}}。
+
+## 数据一致性
+
+<!-- ── 必须替换：你的数据一致策略（如无多存储可删此节） ── -->
+{{主存储}}与{{次存储}}之间为**最终一致性**（秒级），通过 `{{SYNC_TABLE}}` + {{MQ，如有}}补偿。{{当前是否启用}}。
+
+## 缓存 Key 规范
+
+<!-- ── 必须替换：Key 模式 + TTL ── -->
+| Key 模式 | TTL |
+|---------|-----|
+| `{{prefix}}:{id}` | {{TTL}} |
+| `{{list_key}}` | {{TTL}} |
+
+## OpenSpec 工作流
+
+项目使用 OpenSpec spec-driven 工作流，规格文档存放在 `openspec/specs/`，变更存放在 `openspec/changes/`。使用 `/opsx:*` 系列命令管理功能变更生命周期（propose → apply → verify → archive）。

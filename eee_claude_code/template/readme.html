@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code 交付流水线 · 模板使用说明</title>
+<style>
+  :root {
+    --bg: #f6f7fb; --card: #ffffff; --ink: #1f2430; --sub: #5b6472; --line: #e3e7f0;
+    --brand: #2563eb; --brand-soft: #eff4ff;
+    --green: #16a34a; --green-soft: #eefaf1;
+    --amber: #d97706; --amber-soft: #fef6e7;
+    --red: #dc2626; --red-soft: #fdf0f0;
+    --purple: #7c3aed; --purple-soft: #f3efff;
+    --teal: #0d9488; --teal-soft: #e9faf8;
+    --mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--ink); line-height: 1.7; padding-bottom: 80px; }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+
+  header { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #2563eb 100%); color: #fff; padding: 52px 0 44px; }
+  header .badge { display: inline-block; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.35); padding: 3px 12px; border-radius: 999px; font-size: 12.5px; margin-bottom: 16px; }
+  header h1 { font-size: 28px; font-weight: 800; }
+  header p.sub { margin-top: 12px; opacity: .92; font-size: 15px; max-width: 700px; }
+  header .meta { margin-top: 20px; font-size: 12.5px; opacity: .8; }
+
+  section { margin-top: 44px; }
+  h2 { font-size: 21px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  h2 .num { background: var(--brand); color: #fff; width: 30px; height: 30px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 15px; flex: 0 0 auto; }
+  .lead { color: var(--sub); font-size: 14px; margin-bottom: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px 26px; margin-top: 16px; }
+  .card h3 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+  ul { padding-left: 22px; } li { margin: 4px 0; font-size: 14px; }
+  p { font-size: 14px; }
+  code { font-family: var(--mono); font-size: 12.5px; background: #eef1f8; padding: 2px 7px; border-radius: 6px; color: #0f2a6b; }
+  pre { background: #0f172a; color: #dbeafe; padding: 16px 18px; border-radius: 12px; overflow-x: auto; font-size: 12.5px; line-height: 1.75; margin: 10px 0; }
+  pre code { background: none; color: inherit; padding: 0; }
+  pre .cm { color: #64748b; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+  th, td { border: 1px solid var(--line); padding: 9px 12px; text-align: left; vertical-align: top; }
+  th { background: #f1f4fb; font-weight: 700; white-space: nowrap; }
+  td code { white-space: nowrap; }
+
+  .pill { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; margin-right: 6px; white-space: nowrap; }
+  .p-green { background: var(--green-soft); color: var(--green); }
+  .p-amber { background: var(--amber-soft); color: var(--amber); }
+  .p-red { background: var(--red-soft); color: var(--red); }
+  .p-blue { background: var(--brand-soft); color: var(--brand); }
+  .p-purple { background: var(--purple-soft); color: var(--purple); }
+
+  .step { display: flex; gap: 14px; margin-top: 14px; align-items: flex-start; }
+  .step .sn { width: 28px; height: 28px; border-radius: 8px; background: var(--brand); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex: 0 0 auto; margin-top: 2px; }
+  .step .sb { flex: 1; }
+  .step .sb h4 { font-size: 14.5px; margin-bottom: 4px; }
+
+  .tip { background: var(--brand-soft); border-left: 4px solid var(--brand); padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 14px 0; font-size: 13.5px; }
+  .warn { background: var(--amber-soft); border-left: 4px solid var(--amber); padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 14px 0; font-size: 13.5px; }
+  .danger { background: var(--red-soft); border-left: 4px solid var(--red); padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 14px 0; font-size: 13.5px; }
+  .path { font-family: var(--mono); font-size: 11.5px; color: var(--sub); }
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--sub); font-size: 12.5px; text-align: center; }
+
+  /* ── 目录菜单 TOC ── */
+  .toc { position: fixed; top: 50%; right: 18px; transform: translateY(-50%); z-index: 1000; width: 200px; }
+  .toc-inner { background: rgba(255,255,255,.92); backdrop-filter: blur(6px); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 28px rgba(15,23,42,.12); overflow: hidden; }
+  .toc-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; cursor: pointer; background: var(--brand); color: #fff; font-size: 13px; font-weight: 700; user-select: none; }
+  .toc-head .toc-arrow { transition: transform .2s; display: inline-block; font-size: 10px; }
+  .toc.closed .toc-arrow { transform: rotate(-90deg); }
+  .toc-body { max-height: 340px; overflow-y: auto; padding: 8px 6px; }
+  .toc.closed .toc-body { display: none; }
+  .toc-body a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--ink); text-decoration: none; border-radius: 7px; line-height: 1.5; }
+  .toc-body a:hover { background: var(--brand-soft); color: var(--brand); }
+  .toc-body a.active { background: var(--brand-soft); color: var(--brand); font-weight: 700; }
+  .toc-body .toc-num { display: inline-block; width: 22px; color: var(--sub); font-family: var(--mono); font-size: 11px; }
+  .toc-group { margin: 1px 0; }
+  .toc-headline { display: flex; align-items: center; }
+  .toc-headline .toc-item { flex: 1; }
+  .toc-toggle { flex: 0 0 auto; cursor: pointer; color: var(--sub); font-size: 10px; padding: 5px 8px; user-select: none; transition: transform .2s; border-radius: 6px; }
+  .toc-toggle:hover { background: var(--brand-soft); color: var(--brand); }
+  .toc-group.collapsed .toc-toggle { transform: rotate(-90deg); }
+  .toc-group.collapsed .toc-sub { display: none; }
+  .toc-sub { border-left: 2px solid var(--line); margin: 2px 0 4px 10px; padding-left: 4px; }
+  .toc-body .toc-sub a { padding-left: 10px; font-size: 11.5px; }
+  .toc-body .toc-sub .toc-num { width: 30px; color: var(--brand); }
+  @media (max-width: 1100px) { .toc { right: 8px; width: 170px; } }
+  @media (max-width: 860px) { .toc { display: none; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="badge">模板使用说明</span>
+    <h1>Claude Code 交付流水线模板 · README</h1>
+    <p class="sub">从 custom-claude-template 项目提取的"Claude Code 代码交付机制"可迁移模板。本说明告诉你：哪些文件<strong>复制即用</strong>，哪些文件<strong>必须替换</strong>，以及一个新工程从零接入的完整步骤。</p>
+    <div class="meta">template/ 目录 · 本文档已整合完整机制讲解（三层架构 / 流水线 / 关键机制 / 交付时间线）</div>
+  </div>
+</header>
+
+<nav class="toc" id="toc">
+  <div class="toc-inner">
+    <div class="toc-head" onclick="toggleToc()">
+      <span>目录</span>
+      <span class="toc-arrow">▼</span>
+    </div>
+    <div class="toc-body" id="tocBody">
+      <div class="toc-group">
+        <a class="toc-item" href="#sec-overview"><span class="toc-num">01</span>模板目录总览</a>
+      </div>
+      <div class="toc-group">
+        <a class="toc-item" href="#sec-tree"><span class="toc-num">02</span>模板目录树</a>
+      </div>
+      <div class="toc-group has-sub">
+        <div class="toc-headline">
+          <a class="toc-item" href="#sec-sdlc"><span class="toc-num">03</span>SDLC 全流程编排</a>
+          <span class="toc-toggle">▾</span>
+        </div>
+        <div class="toc-sub">
+          <a href="#sec-sdlc-3layer"><span class="toc-num">03.1</span>三层架构</a>
+          <a href="#sec-sdlc-lane"><span class="toc-num">03.2</span>生命周期泳道图</a>
+          <a href="#sec-sdlc-mapping"><span class="toc-num">03.3</span>6 阶段映射</a>
+          <a href="#sec-sdlc-opsx"><span class="toc-num">03.4</span>opsx 命令速查</a>
+          <a href="#sec-sdlc-timeline"><span class="toc-num">03.5</span>一次交付时间线</a>
+        </div>
+      </div>
+      <div class="toc-group has-sub">
+        <div class="toc-headline">
+          <a class="toc-item" href="#sec-requirement"><span class="toc-num">04</span>需求对接</a>
+          <span class="toc-toggle">▾</span>
+        </div>
+        <div class="toc-sub">
+          <a href="#sec-req-path"><span class="toc-num">04.1</span>需求形态 → 路径</a>
+          <a href="#sec-req-confirm"><span class="toc-num">04.2</span>需求会确认吗</a>
+          <a href="#sec-req-original"><span class="toc-num">04.3</span>不跑偏机制</a>
+          <a href="#sec-req-operate"><span class="toc-num">04.4</span>路径 A 完整操作</a>
+          <a href="#sec-req-standard"><span class="toc-num">04.5</span>需求文档标准</a>
+          <a href="#sec-req-bc"><span class="toc-num">04.6</span>路径 B / C 速查</a>
+          <a href="#sec-req-flow"><span class="toc-num">04.7</span>完整数据流</a>
+        </div>
+      </div>
+      <div class="toc-group has-sub">
+        <div class="toc-headline">
+          <a class="toc-item" href="#sec-verify"><span class="toc-num">05</span>验证体系</a>
+          <span class="toc-toggle">▾</span>
+        </div>
+        <div class="toc-sub">
+          <a href="#sec-verify-overview"><span class="toc-num">05.1</span>四层验证总览</a>
+          <a href="#sec-verify-l1"><span class="toc-num">05.2</span>L1 需求验证</a>
+          <a href="#sec-verify-l2"><span class="toc-num">05.3</span>L2 文档验证</a>
+          <a href="#sec-verify-l3"><span class="toc-num">05.4</span>L3 实现验证</a>
+          <a href="#sec-verify-l4"><span class="toc-num">05.5</span>L4 功能验证</a>
+          <a href="#sec-verify-fail"><span class="toc-num">05.6</span>失败不阻塞</a>
+        </div>
+      </div>
+      <div class="toc-group">
+        <a class="toc-item" href="#sec-copy"><span class="toc-num">06</span>复制即用</a>
+      </div>
+      <div class="toc-group has-sub">
+        <div class="toc-headline">
+          <a class="toc-item" href="#sec-replace"><span class="toc-num">07</span>必须处理</a>
+          <span class="toc-toggle">▾</span>
+        </div>
+        <div class="toc-sub">
+          <a href="#sec-replace-claude"><span class="toc-num">07.1</span>CLAUDE.md</a>
+          <a href="#sec-replace-settings"><span class="toc-num">07.2</span>settings hooks</a>
+          <a href="#sec-replace-deps"><span class="toc-num">07.3</span>外部依赖</a>
+          <a href="#sec-replace-feishu"><span class="toc-num">07.4</span>飞书通知</a>
+          <a href="#sec-replace-payment"><span class="toc-num">07.5</span>领域示例</a>
+        </div>
+      </div>
+      <div class="toc-group">
+        <a class="toc-item" href="#sec-onboard"><span class="toc-num">08</span>新工程接入</a>
+      </div>
+      <div class="toc-group has-sub">
+        <div class="toc-headline">
+          <a class="toc-item" href="#sec-deps"><span class="toc-num">09</span>前置依赖</a>
+          <span class="toc-toggle">▾</span>
+        </div>
+        <div class="toc-sub">
+          <a href="#sec-deps-table"><span class="toc-num">09.1</span>依赖清单总表</a>
+          <a href="#sec-deps-browser"><span class="toc-num">09.2</span>agent-browser 详解</a>
+          <a href="#sec-deps-mcp"><span class="toc-num">09.3</span>agent-browser MCP 接入</a>
+          <a href="#sec-deps-sandbox"><span class="toc-num">09.4</span>OS 沙箱兜底</a>
+          <a href="#sec-deps-isolation"><span class="toc-num">09.5</span>mac 隔离方案选型</a>
+        </div>
+      </div>
+      <div class="toc-group">
+        <a class="toc-item" href="#sec-faq"><span class="toc-num">10</span>常见问题</a>
+      </div>
+      <div class="toc-group">
+        <a class="toc-item" href="#sec-install"><span class="toc-num">11</span>一键拷贝脚本</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- ═════════ 01 模板总览 ═════════ -->
+<section id="sec-overview">
+  <h2><span class="num">01</span>模板目录总览</h2>
+  <p class="lead">每个文件都有状态标签：<span class="pill p-green">复制即用</span> 直接拷走；<span class="pill p-amber">改占位符</span> 搜索 `{{XXX}}` 替换；<span class="pill p-red">领域示例</span> 仅作参考骨架，需重写。文件内都写有醒目的适配注释块（`⚠️【模板适配】`）。</p>
+  <div class="card">
+    <table>
+      <tr><th>文件</th><th>状态</th><th>说明</th></tr>
+      <tr><td><code>CLAUDE.md.example</code></td><td><span class="pill p-red">必须重写</span></td><td>项目记忆模板。含全部 `{{XXX}}` 占位符与改写指引，重写后改名为 <code>CLAUDE.md</code></td></tr>
+      <tr><td><code>.claude/settings.json</code></td><td><span class="pill p-green">复制即用</span></td><td>开箱即用（仅权限规则，无外部依赖）。需要 hooks 遥测时改用 settings.json.example</td></tr>
+      <tr><td><code>.claude/settings.json.example</code></td><td><span class="pill p-green">复制即用</span></td><td>entire 完整 hooks 配置（7 个 hook + 权限规则，matcher 已按当前 Claude Code 更新），copy 改名为 <code>settings.json</code> 即得完整遥测。前提：先装好 entire CLI（或跑 <code>entire enable</code> 自动生成）。</td></tr>
+      <tr><td><code>.claude/settings.sandbox.json.example</code></td><td><span class="pill p-green">复制即用</span></td><td>OS 级沙箱兜底配置（macOS Seatbelt / Linux bubblewrap）：开 <code>autoAllowBashIfSandboxed</code> 让沙箱内命令免确认（完全放权），同时内核兜底——即使执行 <code>rm -rf</code> 也删不动项目外文件；deny 规则保护 <code>~/.ssh</code> 等敏感路径。copy 改名为 <code>settings.json</code> 或 <code>settings.local.json</code> 即可。详见 09 章节。</td></tr>
+      <tr><td><code>.claude/commands/opsx/*.md</code>（9 个）</td><td><span class="pill p-green">复制即用</span></td><td><code>/opsx:propose|apply|archive...</code> 命令手册，纯 openspec CLI 封装，与项目无关</td></tr>
+      <tr><td><code>.claude/skills/openspec-*</code>（9 个）</td><td><span class="pill p-green">复制即用</span></td><td>openspec 官方 skill（MIT），与项目无关</td></tr>
+      <tr><td><code>.claude/skills/doc-verify/</code></td><td><span class="pill p-green">复制即用</span></td><td>8 Agent 文档核验。自定义维度改 references/ 下两个文件</td></tr>
+      <tr><td><code>.claude/skills/custom-claude-template-dev-workflow/SKILL.md</code></td><td><span class="pill p-amber">改依赖</span></td><td>5 步全自动交付。依赖外部 skill（compound-engineering / commit-commands / agent-browser），文件头有替换清单</td></tr>
+      <tr><td><code>.claude/skills/custom-claude-template-prod-workflow/SKILL.md</code></td><td><span class="pill p-amber">改占位符</span></td><td>10 步 + 双重质量门禁。含 <code>{{BUILD_COMMAND}}</code>、<code>{{API_PORT}}</code> 占位符 + 外部 skill 依赖</td></tr>
+      <tr><td><code>.claude/skills/custom-claude-template-payment/SKILL.md</code></td><td><span class="pill p-red">领域示例</span></td><td>支付渠道接入流程（下单/回调/退款/对账）。仅演示"领域流程如何固化为 Skill"，需按你的业务重写</td></tr>
+      <tr><td><code>.github/prompts/*</code>（9 个）</td><td><span class="pill p-green">复制即用</span></td><td>opsx 命令的 prompt 版本，与项目无关</td></tr>
+      <tr><td><code>.github/skills/openspec-*</code>（9 个）</td><td><span class="pill p-green">复制即用</span></td><td>openspec skill 的 GitHub Agent 版副本（供 GitHub 侧 AI/Copilot 使用），内容与 <code>.claude/skills/openspec-*</code> 一致。<strong>可选</strong>：Copilot 也会自动拾取 <code>.claude/skills/</code>，此目录仅在需要给 Copilot 单独喂 skill（如 <code>code-review</code>）时才需要</td></tr>
+      <tr><td><code>.github/workflows/pr-notify-feishu.yml</code></td><td><span class="pill p-amber">改 secret</span></td><td>PR 合并 → 飞书通知。需在仓库加 <code>FEISHU_WEBHOOK</code> secret；换平台照搬 curl 结构</td></tr>
+      <tr><td><code>openspec/config.yaml</code></td><td><span class="pill p-green">复制即用</span></td><td>声明 <code>schema: spec-driven</code></td></tr>
+      <tr><td><code>openspec/changes/</code>、<code>openspec/specs/</code></td><td><span class="pill p-green">复制即用</span></td><td>空目录 + .gitkeep，规格驱动的存放地</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="sec-tree">
+  <h2><span class="num">02</span>模板目录树</h2>
+  <p class="lead">template/ 完整文件结构。对照本节可快速确认拷贝是否完整、或定位某个文件该放哪。</p>
+  <div class="card">
+    <pre><code>template/
+├── README.html                     <span class="cm"># 本说明（含完整机制讲解）</span>
+├── CLAUDE.md.example               <span class="cm">⚠️ 项目记忆模板 → 重命名 CLAUDE.md 并替换 {{XXX}}</span>
+├── install.sh                      <span class="cm"># 一键拷贝脚本</span>
+│
+├── .claude/
+│   ├── settings.json                 <span class="cm">✅ 开箱即用（仅权限规则，无外部依赖）</span>
+│   ├── settings.json.example         <span class="cm">⚠️ entire 完整 hooks 配置 → copy 改名 settings.json 即可（matcher 已更新）</span>
+│   ├── settings.sandbox.json.example <span class="cm">🛡️ OS 级沙箱兜底：完全放权也不怕 rm -rf（macOS Seatbelt / Linux bubblewrap）</span>
+│   ├── commands/
+│   │   └── opsx/                   <span class="cm">✅ /opsx:* 命令（9 个，openspec CLI 封装）</span>
+│   │       ├── new.md  propose.md  ff.md  continue.md
+│   │       └── apply.md  verify.md  archive.md  explore.md  sync.md
+│   └── skills/
+│       ├── custom-claude-template-dev-workflow/   <span class="cm">⚠️ 5 步全自动交付</span>
+│       ├── custom-claude-template-prod-workflow/  <span class="cm">⚠️ 10 步 + 双重门禁（含 {{BUILD_COMMAND}}/{{API_PORT}}）</span>
+│       ├── custom-claude-template-payment/        <span class="cm">⚠️ 领域示例：支付渠道接入</span>
+│       ├── doc-verify/                            <span class="cm">✅ 8 Agent 文档核验</span>
+│       │   ├── SKILL.md
+│       │   └── references/
+│       │       ├── agent-prompts.md   <span class="cm"># A1-A8 Agent 职责定义（可定制）</span>
+│       │       └── report-template.md <span class="cm"># 核验报告格式（可定制）</span>
+│       └── openspec-*/               <span class="cm">✅ openspec 官方 skill（9 个）</span>
+│           ├── openspec-new-change   openspec-explore
+│           ├── openspec-propose      openspec-continue-change
+│           ├── openspec-apply-change openspec-verify-change
+│           ├── openspec-archive-change
+│           ├── openspec-ff-change    openspec-sync-specs
+│
+├── .github/
+│   ├── prompts/                     <span class="cm">✅ opsx 的 prompt 版（9 个）</span>
+│   ├── skills/                      <span class="cm">✅ openspec skill 的 GitHub Agent 版（9 个，与 .claude 版一致）</span>
+│   │   └── openspec-*/
+│   └── workflows/
+│       └── pr-notify-feishu.yml     <span class="cm">⚠️ PR 合并 → 飞书通知（需 FEISHU_WEBHOOK secret）</span>
+│
+└── openspec/
+    ├── config.yaml                  <span class="cm">✅ schema: spec-driven</span>
+    ├── changes/
+    │   ├── .gitkeep                 <span class="cm"># 进行中的 change 存放地</span>
+    │   └── archive/.gitkeep         <span class="cm"># 归档的 change 存放地</span>
+    └── specs/.gitkeep               <span class="cm"># 规格真理源（归档后同步到这里）</span>
+
+<span class="cm">图例：✅ 复制即用　⚠️ 需按你的项目替换　# 注释说明</span></code></pre>
+    <div class="tip"><strong>目录树 = 部署清单</strong>：把本页第 01 节的"状态标签"、第 06/07 节的"该拷哪些/该改哪些"、第 08 节的"8 步接入"对着这份树一次核对，即可完成一次完整落地。</div>
+  </div>
+</section>
+
+<section id="sec-sdlc">
+  <h2><span class="num">03</span>SDLC 全流程是如何编排的</h2>
+  <p class="lead">这套流程不是"几个 skill 的零散集合"，而是把软件开发生命周期（SDLC）的每个阶段都"制度化"地映射到了固定的环节、产物和检查点上。任何一个需求，从进入系统到上线，都走同一条流水线。</p>
+  <div class="card">
+    <h3 id="sec-sdlc-3layer">先理解：整套机制 = "记忆 → 能力 → 编排"三层</h3>
+    <p>Claude Code 每次启动自动加载这些文件，从而"记得项目约定、拥有领域技能、按流程干活"。读懂三层，就理解了整条流水线的骨架：</p>
+    <table>
+      <tr><th>层</th><th>由谁承载</th><th>干什么</th></tr>
+      <tr><td><strong>L1 记忆层</strong></td><td><code>CLAUDE.md</code></td><td>项目大脑：目录结构、真实命令、后端/前端架构约定（分层依赖、响应格式、铁律）、缓存 Key 规范、数据一致性策略、OpenSpec 入口。<strong>把"团队规范"写成文件</strong>，而不是口头叮嘱——Claude 每次会话先读它，产出天然符合项目约定。</td></tr>
+      <tr><td><strong>L2 能力层</strong></td><td><code>.claude/skills/</code> + <code>.claude/commands/opsx/</code></td><td>可执行技能包：研发工作流（dev/prod/payment 三个 SKILL.md）、规格驱动（<code>/opsx:*</code> 9 个命令 + openspec-* skill）、质量核验（doc-verify）。按需被 <code>Skill</code> 工具加载。</td></tr>
+      <tr><td><strong>L3 编排层</strong></td><td>OpenSpec + Hooks + GitHub Actions</td><td>让交付"有始有终"：OpenSpec 把需求固化成四件套并归档成真理源；Hooks（settings.json → entire）全程会话留痕审计；GitHub Actions 在 PR 合并后推送通知。</td></tr>
+    </table>
+    <div class="tip">技术栈专家 skill（java-springboot、redis-* 等 30+ 个）也属于 L2 能力层，但属源工程团队自有资产（软链接指向 .agents/skills），<strong>未随模板提供</strong>，按需自备。</div>
+  </div>
+  <div class="card">
+    <table>
+      <tr><th>SDLC 阶段</th><th>流水线环节</th><th>产物</th><th>质量检查点</th></tr>
+      <tr><td>① 需求分析</td><td>brainstorm（可选）→ propose</td><td>需求文档（docs/brainstorms/）、proposal.md</td><td>需求充分性判断（A7 两档策略）</td></tr>
+      <tr><td>② 系统设计</td><td>propose 生成设计件</td><td>design.md（How）、specs/*.md（能力规格）</td><td><span class="pill p-amber">设计门禁</span> doc-verify（8 Agent）</td></tr>
+      <tr><td>③ 编码实现</td><td>opsx:apply 逐任务实现</td><td>代码 + tasks.md（全部打 [x]）</td><td>编译验证（apply 后立即执行）</td></tr>
+      <tr><td>④ 测试验证</td><td>质量门禁 → test-browser / curl</td><td>审查修复记录、测试证据（截图/录屏）</td><td><span class="pill p-amber">代码门禁</span> simplify + code-review（闭环 ≤3 轮）</td></tr>
+      <tr><td>⑤ 交付发布</td><td>提交前检查 → commit + PR</td><td>PR（含门禁结果+测试证据）</td><td>提交前检查（编译/冲突/配置保护）</td></tr>
+      <tr><td>⑥ 维护演进</td><td>archive 归档 + specs 同步 + 经验沉淀</td><td>归档 change、openspec/specs/ 真理源、docs/solutions/ 踩坑库</td><td>opsx:verify（归档前一致性核验）</td></tr>
+    </table>
+    <div class="tip"><strong>编排的核心思想：文档即任务</strong>。需求被转成 proposal → design → specs → tasks 四件套，后续每一步（实现、审查、测试、归档）都以这四件套为准绳；specs 归档后成为长期真理源，下一个需求直接继承。整个生命周期是"文档不断细化、又不断沉淀"的闭环。</div>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-sdlc-lane">生命周期泳道图</h3>
+    <pre><code><span class="cm">┌──────────┐   ┌──────────────┐   ┌─────────────┐   ┌────────────┐   ┌──────────┐   ┌─────────┐</span>
+<span class="cm">│ 需求输入   │──▶│ ① 需求分析    │──▶│ ② 系统设计   │──▶│ ③ 编码实现  │──▶│ ④ 测试验证 │──▶│⑤ 交付发布│</span>
+<span class="cm">│ 口头/PRD  │   │ brainstorm+  │   │ propose     │   │ opsx:apply │   │ 双门禁+   │   │ commit+  │</span>
+<span class="cm">│ /竞品文档 │   │ propose      │   │ +doc-verify │   │ +编译验证   │   │ E2E测试   │   │ PR+通知  │</span>
+<span class="cm">└──────────┘   └──────────────┘   └─────────────┘   └────────────┘   └──────────┘   └────┬────┘</span>
+<span class="cm">       ▲                                    ▲                                            │</span>
+<span class="cm">       │ 新需求参考已有规格                       │ 失败→修复→重试（≤3次）                    ▼</span>
+<span class="cm">  ┌─────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────────────────────┐</span>
+<span class="cm">  │ ⑥ 维护演进   │◀──│ docs/solutions│   │ openspec/    │   │ GitHub Actions               │</span>
+<span class="cm">  │ specs 真理源 │   │ 踩坑库        │   │ specs/ 同步   │   │ PR 合并 → 飞书通知            │</span>
+<span class="cm">  └─────────────┘   └──────────────┘   └──────────────┘   └──────────────────────────────┘</span></code></pre>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-sdlc-mapping">为什么是"6 阶段 ↔ 流水线步骤"的映射</h3>
+    <ul>
+      <li><strong>每一阶段都有"人"的介入点吗？</strong> 只有两处：开头提需求、结尾 review PR。中间全部自动化，靠 skill 递归调度 + 上下文变量（change 名称、改动文件、门禁结果）在步骤间显式传递。</li>
+      <li><strong>质量内建（Shift-Left）</strong>：文档在写代码<em>之前</em>就过 doc-verify 设计门禁；代码在测试<em>之前</em>就过 simplify + code-review——错误发现得越早，修复成本越低。</li>
+      <li><strong>失败不阻塞</strong>：任何门禁 3 轮不过都不中断流程，而是把遗留问题显式写进 PR 描述，让人类 reviewer 知情（Process over Perfection）。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-sdlc-opsx">opsx 命令速查表</h3>
+    <p>opsx 命令是 <code>openspec</code> CLI 的封装（本质是给 Claude 的操作手册），覆盖 change 的全生命周期：</p>
+    <table>
+      <tr><th>命令</th><th>做什么</th><th>产物</th></tr>
+      <tr><td><code>/opsx:propose</code></td><td><code>openspec new change</code> + 按依赖序生成 artifact</td><td>proposal.md · design.md · specs/*.md · tasks.md</td></tr>
+      <tr><td><code>/opsx:apply</code></td><td>读取 contextFiles 逐条实现任务</td><td>代码 + tasks.md 全部打 [x]</td></tr>
+      <tr><td><code>/opsx:verify</code></td><td>核验实现是否与 artifact 一致</td><td>一致性报告</td></tr>
+      <tr><td><code>/opsx:sync</code></td><td>把 delta specs 合并进主规格</td><td>openspec/specs/&lt;capability&gt;/spec.md 更新</td></tr>
+      <tr><td><code>/opsx:archive</code></td><td>移动 change 到 archive/ 目录</td><td>openspec/changes/archive/YYYY-MM-DD-&lt;name&gt;/</td></tr>
+      <tr><td><code>/opsx:continue</code> / <code>/opsx:explore</code> / <code>/opsx:ff</code></td><td>继续变更 / 探索模式 / 快速生成全部 artifact</td><td>—</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-sdlc-timeline">一次完整交付的时间线（custom-claude-template-prod-workflow 版）</h3>
+    <pre><code><span class="cm"># 用户只说一句：</span>
+&gt; 用 /custom-claude-template-prod-workflow 开发商品图片批量导入功能
+
+<span class="cm"># 之后 Claude 自动连续执行（每步开头播报"▶ 步骤 N/10"）：</span>
+▶ 1/10   brainstorm 澄清需求（<span class="cm">可交互，其余不中断</span>）→ docs/brainstorms/...
+▶ 2/10   opsx:propose → openspec/changes/product-image-batch-import/{proposal,design,specs,tasks}
+▶ 2.5    doc-verify → 8 Agent 并行核验 → 修 2 个行号 → 通过 ✓
+▶ 3/10   opsx:apply → 逐任务写代码（新增 4 个 API + brand.product_code_prefix + 导入弹窗）
+         {{BUILD_COMMAND}} ✓
+▶ 4/10   simplify → 消除 1 处重复代码
+▶ 5/10   ce-code-review → 发现 1 个 P1（并发导入未限流）→ 修复 → 重查 → 无 P0/P1 ✓
+         （修复过 → 快速回归：编译 + curl 核心接口）
+▶ 6/10   ce-test-browser headed → 浏览器验证 ZIP 导入→进度轮询→结果展示 ✓
+▶ 7/10   提交前检查：{{BUILD_COMMAND}} / git diff --check / 配置保护 / 未跟踪文件
+▶ 8/10   opsx:archive → 同步 delta spec → archive/2026-08-15-product-image-batch-import/
+▶ 9/10   gh pr create → PR 描述含：变更摘要 + 设计门禁 + 代码门禁 + 测试结果
+<span class="cm"># PR 合并后 GitHub Action 自动推飞书卡片通知 🎉</span></code></pre>
+    <div class="warn"><strong>反直觉但很关键：</strong>这套流程把"文档编写、代码审查、测试"这些平时靠人催促的动作，全部制度化地写死在 Skill 里，Claude 会自动执行。质量不是靠自觉，而是靠流程兜底。</div>
+  </div>
+</section>
+
+<section id="sec-requirement">
+  <h2><span class="num">04</span>需求对接：需求怎么进来、会不会确认、怎么不跑偏</h2>
+  <p class="lead">需求进入流水线有四种形态，形态决定走哪条路径。本节回答你最关心的三个问题：<strong>需求会跟我确认吗？怎么保证最终实现不跑偏？我提供的需求文档要达到什么标准？</strong></p>
+
+  <div class="card">
+    <h3 id="sec-req-path">第一步：需求形态 → 路径</h3>
+    <table>
+      <tr><th>需求形态</th><th>走哪条</th><th>为什么</th></tr>
+      <tr><td>完整 PRD / 需求文档（含范围、验收标准、多章节）</td><td><span class="pill p-red">路径 A</span> custom-claude-template-prod-workflow</td><td>文档足够详实，doc-verify 的 A7 能完整核验覆盖度；涉及现有代码时设计门禁价值最大</td></tr>
+      <tr><td>口头描述 / 一段话 / 不完整想法</td><td><span class="pill p-amber">路径 B</span> 先 brainstorm 再走路径 A</td><td>brainstorm 是唯一交互步骤，把模糊想法澄清成结构化需求文档（docs/brainstorms/）</td></tr>
+      <tr><td>简单 bug / 单文件小改 / 纯配置</td><td><span class="pill p-green">路径 C</span> custom-claude-template-dev-workflow</td><td>不需要门禁，5 步直接跑，省掉 brainstorm 与 doc-verify</td></tr>
+    </table>
+    <div class="warn">拿不准走哪条时：涉及现有代码的<strong>中等及以上规模</strong>需求 → 路径 A；<strong>小改动</strong> → 路径 C。规模判断看改动文件数，改 1-2 个文件通常就是 C。</div>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-req-confirm">第二步：需求会跟我确认吗？</h3>
+    <p>核心机制只有一句话：<strong>brainstorm 是全程唯一允许与你交互的步骤</strong>。从 propose 开始"不中断原则"生效，流水线默认不停下来问你。</p>
+    <table>
+      <tr><th>场景</th><th>会确认吗</th><th>原因</th></tr>
+      <tr><td>你给了完整 PRD（有范围/验收标准）</td><td><span class="pill p-green">不确认</span></td><td>命中"跳过 brainstorm"→ 直接 propose；改由 doc-verify 的 <strong>A7 需求守卫</strong>事后逐条核验覆盖度，偏差会被自动抓出</td></tr>
+      <tr><td>口头一句话 / 模糊想法</td><td><span class="pill p-red">会确认</span></td><td>命中"执行 brainstorm"→ 交互澄清（可能是多轮问答），产出结构化需求文档后再进自动流程</td></tr>
+      <tr><td>明确 bug / CRUD / 小改动</td><td><span class="pill p-green">不确认</span></td><td>可映射到明确操作，直接跑 5 步流水线，全程无交互</td></tr>
+      <tr><td>你说"先帮我理清思路 / 分析一下"</td><td><span class="pill p-red">会确认</span></td><td>用户显式要求探索 → 无条件先进 brainstorm</td></tr>
+    </table>
+    <div class="tip"><strong>判断口诀</strong>——"跳过 brainstorm"：有 PRD/原型图/详细验收标准、可映射明确 CRUD/API、有 Bug 现象+复现步骤、仅配置/文案/样式。反之（描述 &lt;2 句说不清、全新业务领域、多方多系统联动）<strong>必须</strong>先 brainstorm。<br>另外 propose 内部还有一个兜底：生成规格文档时若上下文严重不清晰，也会用 AskUserQuestion 问你，但偏好"合理推断继续推进"。</div>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-req-original">第三步：需求怎么保证不跑偏（ORIGINAL_REQUIREMENT 机制）</h3>
+    <p>核心原则：<strong>需求原文永远被原样保存并贯穿全流程</strong>，而不是被 AI"转述"或"概括"——转述即失真。机制分三步：</p>
+    <ul>
+      <li><strong>① 原文缓存</strong>：流程第一步就把你从"提到需求"到"现在"的所有消息（<em>不做语义过滤</em>）缓存进上下文变量 <code>ORIGINAL_REQUIREMENT</code>；若走了 brainstorm，则更新为 brainstorm 产出的<strong>完整需求文档全文</strong>（非摘要），并记录文件路径。</li>
+      <li><strong>② 同一份数据两处消费</strong>：propose 构造 args（R1）与 doc-verify 的 A7 需求守卫（R2）读的是<em>同一份</em>原文——"写设计"和"验设计"基于同一事实，不存在 AI 前后两版需求。</li>
+      <li><strong>③ 超长降级，保护关键章节</strong>：args 超过 5000 字时全文降级为核心要点摘要，但 <strong>Scope Boundaries 与 Key Decisions 保留完整原文</strong>——这两章是防范围蔓延和防决策漂移的命门。</li>
+    </ul>
+    <div class="tip"><strong>A7 两档策略</strong>：需求文本 &gt;50 字或含明确功能点（如带编号列表）→ 完整核验"需求覆盖度 + 可实施性"；文本过简 → 只做可实施性评审，但<strong>强制产出"需求简短警告"</strong>（P1 级，不阻塞），提醒你需求描述太短、核验已变浅。</div>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-req-operate">第四步：路径 A 完整操作（拿到 PRD 后）</h3>
+    <pre><code><span class="cm"># 假设你已有一份 PRD.md，操作如下：</span>
+
+&gt; 用 /custom-claude-template-prod-workflow 开发&lt;功能名&gt;
+&gt; （然后直接粘贴 PRD 全文，或写"需求文档在 docs/plans/PRD-xxx.md"）
+
+<span class="cm">① 步骤 1（可选）需求充分 → 跳过 brainstorm，直接进步骤 2</span>
+<span class="cm">② 步骤 2 propose 读取 PRD，自动构造 args：</span>
+     用户需求 +【需求约束】← Scope Boundaries 原文
+                +【关键决策】← Key Decisions 原文
+                +【成功标准】← Success Criteria 原文
+                +【项目约束】← 从 CLAUDE.md 提取 ≤15 行
+   （文档 &gt;5000 字时自动降级为核心要点摘要，但保留 Scope/Key Decisions 全文）
+   产物：openspec/changes/&lt;name&gt;/{proposal,design,specs,tasks}
+
+<span class="cm">③ 步骤 2.5 doc-verify 设计门禁</span>
+   - A7 需求守卫：拿 PRD 原文逐条对照 design/specs，输出覆盖矩阵
+     （✅已覆盖 / ⚠️部分覆盖 / ❌遗漏 / 🔄扭曲）
+   - A1-A6：文档引用的字段/行号/枚举/影响范围 与代码库一致性
+   - A8：跨文档一致性（含 CLAUDE.md 约定）
+
+<span class="cm">④ 步骤 3-5 实现 + 代码门禁</span>
+   opsx:apply 逐任务实现 → 编译验证 → simplify + code-review 闭环（≤3 轮）
+
+<span class="cm">⑤ 步骤 6-9 测试 + 交付</span>
+   E2E 测试（或纯后端 curl）→ 提交前检查 → archive 归档
+   → commit + PR（描述含：设计门禁结果 + 代码门禁结果 + 测试证据）</code></pre>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-req-standard">第五步：需求文档本身要达到什么标准</h3>
+    <p>需求文档的质量直接决定 A7 核验深度。有这三个章节，全流程才能发挥最大价值：</p>
+    <table>
+      <tr><th>需求文档章节</th><th>流程里怎么用</th><th>缺失的后果</th></tr>
+      <tr><td><strong>Scope Boundaries</strong>（包含/排除）</td><td>注入 propose args 作为【需求约束】；A7 验证文档是否遵守限定词（仅XX/排除XX）</td><td>范围蔓延，A7 无法做限定词核验</td></tr>
+      <tr><td><strong>Key Decisions</strong>（关键决策）</td><td>注入 propose args 作为【关键决策】</td><td>propose 只能自行推断，可能偏离你的真实决策</td></tr>
+      <tr><td><strong>Success Criteria</strong>（成功标准/验收标准）</td><td>注入 propose args 作为【成功标准】；A7 映射到设计文档</td><td>A7 退化为"仅可实施性评审"，覆盖度核验失真</td></tr>
+    </table>
+    <div class="tip"><strong>拿到文档后第一件事</strong>：确认它有没有上面三节。缺的话，要么让 brainstorm 补齐，要么接受 A7 输出"需求简短警告"（不阻塞，但意味着核验变浅）。</div>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-req-bc">路径 B / 路径 C 速查</h3>
+    <ul>
+      <li><strong>路径 B（模糊想法）</strong>：`/custom-claude-template-prod-workflow 我想做X但还没想清楚` → 步骤 1 brainstorm 交互澄清 → 产出 docs/brainstorms/ 需求文档 → 该文档自动成为 propose 输入（与 PRD 同等对待），随后流程同路径 A。</li>
+      <li><strong>路径 C（小改动）</strong>：直接说"修复XXX"或"开发XXX" → 自动触发 custom-claude-template-dev-workflow → propose → apply → 浏览器测试 → archive → PR。全程无交互。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-req-flow">需求 → 交付的完整数据流</h3>
+    <pre><code>需求原文（口头/PRD/brainstorm 文档）
+   │  ① ORIGINAL_REQUIREMENT 缓存（原样保留，不概括）
+   ▼
+propose  →  proposal.md  design.md  specs/*.md  tasks.md
+   │         ▲ ② 需求章节被注入 args
+   ▼         │
+doc-verify → A7 拿 ORIGINAL_REQUIREMENT 核验覆盖度（第③处使用同一份数据）
+   │
+   ▼
+opsx:apply → 代码实现（tasks 驱动）
+   │
+   ▼
+质量门禁 → 测试 → 提交前检查
+   │
+   ▼
+opsx:archive → specs 同步到 openspec/specs/（真理源）
+                docs/solutions/ 踩坑库
+                PR 合并 → 飞书通知
+   │
+   ▼
+下一个需求：从 openspec/specs/ 继承已有规格，只写增量</code></pre>
+    <div class="tip"><strong>同一份需求数据在 3 处被复用</strong>：① 缓存进上下文变量 → ② 构造 propose args → ③ 交给 A7 需求守卫。这就是"文档不跑偏"的机制保障。</div>
+  </div>
+</section>
+
+<section id="sec-verify">
+  <h2><span class="num">05</span>验证体系：怎么验证需求、怎么保证实现符合需求、怎么验证功能</h2>
+  <p class="lead">"AI 写的东西怎么敢信？"答案不是"信"，而是<strong>验证</strong>。流水线对每一层转换都设了验证关卡，把"需求 → 设计 → 代码 → 功能"每一步的偏差都拦下来。整个验证体系 = <strong>四层验证</strong>（分别回答需求、文档、实现、功能四个问题）+ 一道质量旁路。</p>
+
+  <div class="card">
+    <h3 id="sec-verify-overview">四层验证总览</h3>
+    <table>
+      <tr><th>验证什么</th><th>在哪个环节</th><th>用什么验证</th><th>产出</th></tr>
+      <tr><td><strong>L1 需求被理解对吗</strong>（需求 → 设计）</td><td>步骤 2.5 设计门禁</td><td>doc-verify 的 <code>A7 需求守卫</code></td><td>覆盖矩阵（✅已覆盖/⚠️部分/❌遗漏/🔄扭曲）+ Verdict</td></tr>
+      <tr><td><strong>L2 文档是真实的吗</strong>（设计 → 代码库）</td><td>步骤 2.5 设计门禁</td><td>doc-verify 的 <code>A1-A6 + A8</code></td><td>一致性发现清单 + 自动修复 + Verdict</td></tr>
+      <tr><td><strong>L3 代码实现文档了吗</strong>（代码 → 设计）</td><td>步骤 3 之后 / 归档之前</td><td>编译验证 + <code>opsx:verify</code></td><td>Completeness / Correctness / Coherence 三维报告</td></tr>
+      <tr><td><strong>L4 功能真的能用吗</strong>（功能 → 需求）</td><td>步骤 6 端到端测试</td><td><code>test-browser</code>（前端）/ <code>curl</code>（后端）</td><td>功能点通过清单 + 截图/录屏证据</td></tr>
+    </table>
+    <div class="tip"><strong>质量旁路</strong>：步骤 4-5 的代码门禁（simplify + code-review）验证的不是"需求"，而是"写得好不好"（重复/复杂度/安全/性能）——它保证交付物<strong>达标</strong>，而 L1-L4 保证交付物<strong>符合需求</strong>。两件事互相独立。</div>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-verify-l1">L1 需求验证：A7 需求守卫 —— "要的是不是这个东西"</h3>
+    <ul>
+      <li><strong>输入</strong>：<code>ORIGINAL_REQUIREMENT</code> 原文（不是 AI 概括后的摘要）。</li>
+      <li><strong>做什么</strong>：把需求原文逐条对照 design/specs，输出<strong>覆盖矩阵</strong>：<span class="pill p-green">✅ 已覆盖</span><span class="pill p-amber">⚠️ 部分覆盖</span><span class="pill p-red">❌ 遗漏</span><span class="pill p-purple">🔄 扭曲</span>；同时做可实施性评审（每项是否可实现、依赖是否齐全、边界是否清晰）。</li>
+      <li><strong>两档策略</strong>：需求 &gt;50 字或含明确功能点 → 完整运行；过简 → 仅可实施性 + 强制"需求简短警告"（P1，不阻塞）。</li>
+      <li><strong>意义</strong>：这是全流程唯一直接对照"你的原始需求"的环节，专门抓"要的是 A、文档做成 B"。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-verify-l2">L2 文档验证：doc-verify 8 Agent —— "文档是不是 AI 编的"</h3>
+    <p>8 个并行 Agent（sonnet）从不同维度找文档的"幻觉"（文档声称的东西代码里根本不存在）：</p>
+    <table>
+      <tr><th>Agent</th><th>核验维度</th></tr>
+      <tr><td>A1 字段守卫</td><td>文档写的字段名 / 类型 / 值域 vs 实际 DO/VO/Entity</td></tr>
+      <tr><td>A2 行号猎手</td><td>文档引用的 文件名:行号、方法名 是否真实存在</td></tr>
+      <tr><td>A3 逻辑侦探</td><td>文档描述的流程 vs 代码实际执行路径</td></tr>
+      <tr><td>A4 枚举审计</td><td>枚举值、字典值、状态码是否对得上</td></tr>
+      <tr><td>A5 影响雷达</td><td>变更影响范围是否漏了关联模块</td></tr>
+      <tr><td>A6 边界猎手</td><td>边界条件 / 异常路径在文档里有没有交代</td></tr>
+      <tr><td>A7 需求守卫</td><td>（见 L1）需求覆盖度 + 可实施性</td></tr>
+      <tr><td>A8 跨文档一致性</td><td>多份文档（含 CLAUDE.md 约定）之间是否自相矛盾</td></tr>
+    </table>
+    <ul>
+      <li><strong>合并管线</strong>：容错解析 JSON → 指纹去重（同一问题被 2+ Agent 命中则标注"多 Agent 共识"提升可信度）→ 分队列（auto-fix / interactive / bugs）→ 按 severity 排序。</li>
+      <li><strong>修复策略</strong>：行号偏移、字段拼写这类<strong>简单问题自动修</strong>（只改文档、绝不改代码）；业务逻辑偏差这类复杂问题，独立调用时批量问你，工作流模式下记录后继续。</li>
+      <li><strong>闭环 ≤3 轮</strong>：仍有 P0/P1 → 重跑 8 Agent（第 2 轮起附加"已修复内容"做增量核验，省 context）。3 轮仍不过 → 结果记进 PR 描述，不阻塞。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-verify-l3">L3 实现验证：编译 + opsx:verify —— "代码真的实现了文档吗"</h3>
+    <ul>
+      <li><strong>编译验证</strong>：apply 一结束立即跑构建，编译不过先修代码——"在无法编译的代码上做 review 是浪费时间"。失败就地修，最多 3 次。</li>
+      <li><strong>opsx:verify 三维度</strong>：
+        <ul>
+          <li><strong>Completeness（完整性）</strong>：tasks.md 是否全部打 [x]；delta specs 里每条 Requirement 在代码库是否有实现证据。</li>
+          <li><strong>Correctness（正确性）</strong>：实现是否偏离需求意图（关键词搜索 + 代码路径分析）；specs 里每条 Scenario 是否被实现、有无测试覆盖。</li>
+          <li><strong>Coherence（一致性）</strong>：实现是否遵循 design.md 的关键决策；新代码是否符合项目模式（命名/目录/风格）。</li>
+        </ul>
+      </li>
+      <li><strong>三级问题</strong>：CRITICAL（归档前必须修）/ WARNING（应修）/ SUGGESTION（可改）。每条都带具体修复建议与 文件:行 定位，禁止空话"请 review"。</li>
+      <li><strong>启发式原则</strong>：拿不准时降级（SUGGESTION 优先于 WARNING 优先于 CRITICAL），避免误报阻塞交付。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-verify-l4">L4 功能验证：端到端测试 —— "功能真的能用吗"</h3>
+    <table>
+      <tr><th>改动类型</th><th>验证方式</th><th>证据</th></tr>
+      <tr><td>前端 / 全栈变更</td><td><code>test-browser</code> headed 可视化模式，交互操作逐步验证</td><td>截图（{分支}_{日期}_NN-描述.png）+ 录屏 .webm，经临时 GitHub Release 嵌入 PR body</td></tr>
+      <tr><td>纯后端变更</td><td><code>curl</code> 探活健康检查 + 核心接口断言</td><td>HTTP 状态码 + 返回体</td></tr>
+    </table>
+    <ul>
+      <li><strong>测试 URL 推断</strong>：按改动文件找消费它的前端路由；动态参数从库里查一条有效记录；推断不了用首页兜底。</li>
+      <li><strong>失败闭环</strong>：关键测试失败 → 就地修复 → 重测，最多 3 次；3 次仍失败记入 PR 描述。</li>
+      <li><strong>经验沉淀</strong>：只要测试失败过（哪怕最终通过），就触发 compound 把"Bug → 根因 → 修复 → 验证"归档到 docs/solutions/，下次不再踩同一个坑。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-verify-fail">失败不阻塞：为什么门禁不是"一票否决"（Process over Perfection）</h3>
+    <p>每个验证环节都允许失败、上限 3 轮，3 轮后把<strong>遗留问题显式写进 PR 描述</strong>，由人类 reviewer 知情终审。理由：流水线中途反复重试会烧掉大量 context，且 AI 自我修复存在边际递减；把问题<strong>透明化</strong>交付给人类把关，比假装"全绿"更诚实、更安全。PR 描述承载的正是四层验证的完整证据链。</p>
+    <pre><code>需求 ──▶ L1 A7 需求守卫（覆盖矩阵）──────────────┐
+   │                                          │ 设计门禁 步骤 2.5
+   ▼                                          │ doc-verify 8A → 自动修复 → 重核验（≤3 轮）
+设计文档 ──▶ L2 A1-A6/A8 一致性核验 ─────────────┤
+   │                                          └── Verdict: Ready / Ready with notes / Not ready
+   ▼
+实现（opsx:apply）→ 编译验证 ──▶ L3 opsx:verify（Completeness/Correctness/Coherence）
+   │
+   ▼
+代码门禁（步骤 4-5）simplify → code-review → 修复 → 重审（≤3 轮）→ 快速回归
+   │
+   ▼
+L4 端到端测试（步骤 6）test-browser / curl → 失败→修复→重测（≤3 轮）
+   │
+   ▼
+提交前检查 → archive → PR（PR 描述 = 四层验证结果汇总，人 review 终审）</code></pre>
+  </div>
+</section>
+
+<section id="sec-copy">
+  <h2><span class="num">06</span>复制即用：这些直接拷贝</h2>
+  <p class="lead">以下文件与具体项目无关，纯"流程机制"，整体拷贝到新工程即可，无需改动。</p>
+  <div class="card">
+    <ul>
+      <li><strong>opsx 命令层</strong>：<code>.claude/commands/opsx/</code> 整个目录（9 个文件）</li>
+      <li><strong>OpenSpec skill 层</strong>：<code>.claude/skills/openspec-*/</code> 整个目录（9 个 skill）</li>
+      <li><strong>文档核验</strong>：<code>.claude/skills/doc-verify/</code> 整个目录（含 references/）</li>
+      <li><strong>GitHub prompts</strong>：<code>.github/prompts/</code> 整个目录（9 个文件）</li>
+      <li><strong>OpenSpec 骨架</strong>：<code>openspec/</code>（config.yaml + 三个空目录）</li>
+    </ul>
+    <div class="tip">这些文件共同组成"规格驱动"的地基：<code>/opsx:*</code> 命令 + openspec CLI 负责 change 生命周期（propose→apply→verify→archive），doc-verify 负责设计门禁。</div>
+  </div>
+</section>
+
+<section id="sec-replace">
+  <h2><span class="num">07</span>必须处理：这些要替换</h2>
+  <p class="lead">以下文件带 <code>{{XXX}}</code> 占位符或外部依赖，按你自己的项目填空。</p>
+
+  <div class="card">
+    <h3 id="sec-replace-claude"><span class="pill p-red">1. CLAUDE.md.example → 你的 CLAUDE.md（最重要）</span></h3>
+    <p>这是 Claude 的"项目大脑"，所有约定写在这里。占位符一览：</p>
+    <table>
+      <tr><th>占位符</th><th>填什么</th><th>示例</th></tr>
+      <tr><td><code>{{PROJECT_NAME}} / {{PROJECT_NAME_EN}}</code></td><td>项目中文名 / 英文名</td><td>你的项目名 / custom-claude-template</td></tr>
+      <tr><td><code>{{BACKEND_STACK}}</code> <code>{{FRONTEND_STACK}}</code></td><td>技术栈</td><td>Java 17 + Spring Boot 3.5（Maven 多模块）</td></tr>
+      <tr><td><code>{{BACKEND_ROOT}}</code> <code>{{MODULE_API}}</code> …</td><td>目录名</td><td>backend / custom-claude-template-api</td></tr>
+      <tr><td><code>{{BUILD_COMMAND}}</code> <code>{{DEV_RUN_COMMAND}}</code> <code>{{TEST_COMMAND}}</code></td><td>编译/启动/测试命令</td><td>mvn clean compile</td></tr>
+      <tr><td><code>{{PKG_MANAGER}}</code> <code>{{ADMIN_PORT}}</code> <code>{{API_PORT}}</code>…</td><td>包管理器 / 端口</td><td>pnpm / 5173 / 8080</td></tr>
+      <tr><td>「关键技术约定」整节</td><td>你的铁律</td><td>ORM / 软删除 / 认证 / 注解顺序</td></tr>
+    </table>
+    <div class="warn">命令必须真实可跑。Claude 每次会话先读 CLAUDE.md，命令写错 = 全程跑偏。改完把文件重命名为 <code>CLAUDE.md</code> 放到新工程根目录。</div>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-replace-settings"><span class="pill p-amber">2. settings.json → 你的 hooks（可选）</span></h3>
+    <p>模板自带的 <code>settings.json</code> 是<strong>开箱即用</strong>的纯净版（仅权限规则，不依赖任何外部工具）。原项目把 hooks 转发给 <code>entire</code> 做会话遥测（session 留痕审计），你需要的话：</p>
+    <ul>
+      <li><strong>方案 A（推荐）</strong>：直接用 <code>entire</code>（开源会话遥测 CLI，与源工程同款）。hooks 配置已备好在 <code>settings.json.example</code>，copy 即用：
+        <pre><code><span class="cm"># 1. 安装 CLI（brew 新版本要求先 trust 第三方 tap，否则报 "Refusing to load cask ... untrusted tap"）</span>
+brew tap entireio/tap
+brew trust entireio/tap        <span class="cm"># 信任该 tap（当前 brew 版本需要，旧版可跳过）</span>
+brew install --cask entire
+
+<span class="cm"># 2. copy 模板里的完整 entire 配置（matcher 已按当前 Claude Code 更新）</span>
+cp .claude/settings.json.example .claude/settings.json
+<span class="cm">#    或跑 entire enable 自动写入（已有 settings.json 会被保留合并）：</span>
+entire enable --agent claude-code
+entire enable --agent claude-code --force --project   <span class="cm"># 想强制覆盖整个 hooks 时</span>
+entire status                                          <span class="cm"># 验证</span></code></pre>
+      </li>
+      <li><strong>方案 B</strong>：不用 entire，改为把 <code>settings.json.example</code> 里 7 处 <code>entire</code> 命令换成自己的遥测命令（如日志落盘 <code>/path/to/log-session.sh</code>），改名为 <code>settings.json</code> 覆盖纯净版</li>
+      <li><strong>方案 C</strong>：不需要遥测就保持现状（纯净版 settings.json 直接用）</li>
+    </ul>
+    <p style="margin-top:14px;"><strong>entire hooks 详解：<code>entire hooks claude-code post-task</code> 这句话到底在干嘛？</strong></p>
+    <p><code>entire</code> 是开源会话遥测 CLI（<a href="https://github.com/entireio/cli" target="_blank" rel="noopener">github.com/entireio/cli</a>），把"AI 是怎么把代码写出来的"全程留痕并关联 git 提交：保留每轮 prompt、改动的文件、工具调用、token 用量，支持任意 checkpoint 续接。它不是 Claude Code 自带的，而是通过 settings.json 的 hooks 挂进来。以 <code>entire hooks claude-code post-task</code> 为例拆开看：</p>
+    <ul>
+      <li><code>entire</code> —— 调用该 CLI（需先安装）</li>
+      <li><code>hooks claude-code</code> —— "我要处理 Claude Code 的 hook 事件"，第二个参数是 agent 名</li>
+      <li><code>post-task</code> —— 具体事件名：<strong>子 Agent（Agent 工具）执行完毕后</strong>触发</li>
+    </ul>
+    <p>它出现在 <code>PostToolUse</code> 分组下、matcher 为 <code>Agent</code>：每当 Claude 启动一个子 Agent 且其返回结果，Claude Code 就把这次工具调用的 JSON 上下文通过 stdin 交给这条命令，entire 据此打一个"子任务结束"的 checkpoint，记录改动的文件、耗时与 token 用量。完整 hook 矩阵（matcher 已按当前 Claude Code 更新——<code>Task</code> 工具已改名 <code>Agent</code>，<code>TodoWrite</code> 已被 <code>TaskCreate|TaskUpdate</code> 取代，旧 matcher 在新版上会静默失效）：</p>
+    <table>
+      <tr><th>settings.json 分组</th><th>matcher</th><th>entire 事件</th><th>触发时机</th></tr>
+      <tr><td><code>SessionStart</code></td><td>（全部）</td><td><code>session-start</code></td><td>会话启动，开始累计当前 session</td></tr>
+      <tr><td><code>UserPromptSubmit</code></td><td>（全部）</td><td><code>user-prompt-submit</code></td><td>每条用户消息提交，记录完整需求原文</td></tr>
+      <tr><td><code>PreToolUse</code></td><td><code>Agent</code></td><td><code>pre-task</code></td><td>子 Agent 启动前</td></tr>
+      <tr><td><code>PostToolUse</code></td><td><code>Agent</code></td><td><code>post-task</code></td><td>子 Agent 结束后</td></tr>
+      <tr><td><code>PostToolUse</code></td><td><code>TaskCreate|TaskUpdate</code></td><td><code>post-todo</code></td><td>任务清单更新后，记录进度</td></tr>
+      <tr><td><code>Stop</code></td><td>（全部）</td><td><code>stop</code></td><td>Claude 完成本轮输出（停止响应）</td></tr>
+      <tr><td><code>SessionEnd</code></td><td>（全部）</td><td><code>session-end</code></td><td>会话销毁，收尾归档</td></tr>
+    </table>
+    <div class="tip">数据落在 <code>.entire/</code> 目录——这就是纯净版 settings.json 里 <code>deny Read(./.entire/metadata/**)</code> 的原因：审计数据不允许 AI 自己读取改写。</div>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-replace-deps"><span class="pill p-amber">3. custom-claude-template-dev-workflow / custom-claude-template-prod-workflow 的外部依赖</span></h3>
+    <p>两条流水线 Skill 本身可迁移，但依赖几个外部 skill 包，文件头已列明替换清单：</p>
+    <table>
+      <tr><th>外部依赖</th><th>用途</th><th>没有它怎么办</th></tr>
+      <tr><td><code>opsx:*</code> 命令 + openspec CLI</td><td>规格驱动（步骤 1/2/8）</td><td>必须装，模板自带命令，只需 <code>brew/npm install openspec</code></td></tr>
+      <tr><td><code>compound-engineering:test-browser</code></td><td>端到端测试（步骤 3/6）</td><td>换成你现有的 E2E 方案（Playwright 等），保留"截图+录屏证据"逻辑</td></tr>
+      <tr><td><code>agent-browser --headed</code></td><td>可视化浏览器 + 截图录屏</td><td>换 Playwright screenshot 或删掉，只留文字断言</td></tr>
+      <tr><td><code>compound-engineering:ce-compound</code></td><td>踩坑归档到 docs/solutions/</td><td>可删，或手动把教训写入你自己的 solutions 目录</td></tr>
+      <tr><td><code>commit-commands:commit-push-pr</code></td><td>自动 commit + PR</td><td>步骤 5 已内置手动 git 命令兜底，照抄即可</td></tr>
+      <tr><td><code>simplify</code> / <code>ce-code-review</code></td><td>代码质量门禁（仅 custom-claude-template-prod）</td><td>可删门禁或换你自己的 review 方案</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-replace-feishu"><span class="pill p-amber">4. pr-notify-feishu.yml</span></h3>
+    <p>在 GitHub 仓库 <code>Settings → Secrets and variables → Actions</code> 新增 <code>FEISHU_WEBHOOK</code>。不用飞书就把文件里的消息体换成企微/钉钉/邮件（都是同一个 curl POST 模式）。</p>
+  </div>
+
+  <div class="card">
+    <h3 id="sec-replace-payment"><span class="pill p-red">5. custom-claude-template-payment（领域示例）</span></h3>
+    <p>这是"领域流程固化为 Skill"的<strong>示范</strong>，不是通用模板。示例场景是"支付渠道接入"（下单/回调/退款/对账）。迁移时参考它的骨架：<strong>前置确认清单（缺一不可）→ 分步实现 → 验证 → 提交</strong>，重写表名/包名/接口细节。你自己的领域流程（如"对接物流渠道""接入 CRM"）照着这个结构写一个 SKILL.md。</p>
+  </div>
+</section>
+
+<section id="sec-onboard">
+  <h2><span class="num">08</span>新工程接入：8 步清单</h2>
+  <div class="card">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb"><h4>安装 openspec CLI</h4>
+        <pre><code><span class="cm"># 参考 https://github.com/fission-ai/openspec</span>
+npm install -g @fission-ai/openspec   <span class="cm"># 或用你系统的安装方式</span>
+openspec --version</code></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb"><h4>拷贝"复制即用"目录</h4>
+        <pre><code><span class="cm"># 到你的新工程根目录下</span>
+cp -r template/.claude/commands/opsx     你的工程/.claude/commands/
+cp -r template/.claude/skills/openspec-* 你的工程/.claude/skills/
+cp -r template/.claude/skills/doc-verify  你的工程/.claude/skills/
+cp -r template/.github/prompts            你的工程/.github/
+cp -r template/openspec                  你的工程/</code></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb"><h4>编写你的 CLAUDE.md</h4>
+        <p>基于 <code>CLAUDE.md.example</code>，替换全部 <code>{{XXX}}</code>，重点填真实命令与技术铁律，重命名为 <code>CLAUDE.md</code> 放工程根目录。</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">4</div>
+      <div class="sb"><h4>接入流水线 skill</h4>
+        <p>拷贝 <code>custom-claude-template-dev-workflow</code>（先用 5 步版跑通），按文件头清单替换外部依赖后放 <code>.claude/skills/</code>。稳定后再上 <code>custom-claude-template-prod-workflow</code>。</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">5</div>
+      <div class="sb"><h4>配置 hooks（可选）</h4>
+        <p>纯净版 <code>settings.json</code> 已开箱即用。需要遥测：<code>cp settings.json.example settings.json</code> → 改名为 <code>settings.json</code> 即得 entire 完整配置（先装好 entire，或跑 <code>entire enable --agent claude-code</code> 自动写入）。</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">6</div>
+      <div class="sb"><h4>配置 PR 通知</h4>
+        <p>拷贝 <code>.github/workflows/pr-notify-feishu.yml</code>，在 GitHub 加 <code>FEISHU_WEBHOOK</code> secret。</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">7</div>
+      <div class="sb"><h4>验证触发</h4>
+        <pre><code><span class="cm"># 在工程里启动 Claude Code，随便说一句：</span>
+&gt; 开发一个用户登录功能
+<span class="cm"># 预期：触发 custom-claude-template-dev-workflow → 自动 propose → apply → 测试 → archive → PR</span></code></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">8</div>
+      <div class="sb"><h4>小步试跑 → 逐步加固</h4>
+        <p>先做一个极小的 change 验证全链路，再按需启用：<code>doc-verify</code>（设计门禁）→ <code>custom-claude-template-prod-workflow</code>（代码门禁）→ 你自己的领域 skill（仿照 custom-claude-template-payment）。</p>
+      </div>
+    </div>
+    <div class="tip" style="margin-top:14px;"><strong>学习路径建议：</strong>1) 先读 CLAUDE.md，理解项目人格；2) 读 custom-claude-template-dev-workflow，理解 5 步骨架；3) 读 custom-claude-template-prod-workflow，理解门禁闭环；4) 读 opsx/propose + apply + archive 三个命令，理解 OpenSpec 怎么当任务管理；5) 最后看 openspec/changes/archive/ 里任一已归档 change，观察"文档长什么样才算合格"。</div>
+  </div>
+</section>
+
+<section id="sec-deps">
+  <h2><span class="num">09</span>前置依赖清单</h2>
+  <p class="lead">全套依赖分四档：<span class="pill p-red">必须</span> 缺了流水线跑不起来；<span class="pill p-amber">建议</span> 缺了自动降级；<span class="pill p-blue">可选</span> 按需自装。安装命令与替换方案均已列明。</p>
+  <div class="card">
+    <h3 id="sec-deps-table"><span class="pill p-blue">09.01</span>依赖清单总表</h3>
+    <table>
+      <tr><th>依赖</th><th>用途</th><th>必需度</th><th>如何安装</th></tr>
+      <tr><td>Claude Code</td><td>载体</td><td><span class="pill p-red">必须</span></td><td><code>curl -fsSL https://claude.ai/install.sh | bash</code>（或用 npm <code>npm i -g @anthropic-ai/claude-code</code>）</td></tr>
+      <tr><td>openspec CLI</td><td>spec-driven 工作流引擎</td><td><span class="pill p-red">必须</span></td><td>npm 全局安装：<code>npm install -g @openspec/cli</code>，验证 <code>openspec --version</code></td></tr>
+      <tr><td>gh CLI + GitHub 仓库</td><td>创建分支/PR/Release 托管截图（GitHub 用）</td><td><span class="pill p-red">必须</span>（二选一）</td><td><code>brew install gh</code>，然后 <code>gh auth login</code></td></tr>
+      <tr><td>glab CLI + GitLab 仓库</td><td>创建分支/MR（Merge Request）合并/截图托管（GitLab 用，<code>gh</code> 只支持 GitHub）</td><td><span class="pill p-red">必须</span>（二选一）</td><td><code>brew install glab</code>，然后 <code>glab auth login</code>；流水线 skill 中的提交/PR 步骤按需改为 MR</td></tr>
+      <tr><td>git</td><td>版本控制</td><td><span class="pill p-red">必须</span></td><td><code>brew install git</code>（macOS 自带旧版可升级）</td></tr>
+      <tr><td>compound-engineering 插件</td><td>测试/提交子技能</td><td><span class="pill p-amber">建议</span>（可替换）</td><td>Claude Code 内：<code>/plugin marketplace add EveryInc/compound-engineering-plugin</code> → <code>/plugin install compound-engineering</code>（装完需重启）</td></tr>
+      <tr><td>commit-commands</td><td>提交/PR 子技能</td><td><span class="pill p-amber">建议</span>（可替换）</td><td>同 compound-engineering（其 ce-commit-push-pr 即可替代；若独立安装：<code>gh skill install &lt;作者/仓库&gt; &lt;skill名&gt; --agent claude-code</code>）</td></tr>
+      <tr><td>agent-browser</td><td>可视化浏览器测试：驱动真实 Chromium 打开页面/点击/填表/导航，截图+录屏留证</td><td><span class="pill p-amber">建议</span>（可替换）</td><td><code>npm install -g agent-browser</code> → <code>agent-browser install</code>（下载 Chromium），验证 <code>command -v agent-browser</code></td></tr>
+      <tr><td>entire（或你的遥测工具）</td><td>会话 hooks 留痕</td><td><span class="pill p-blue">可选</span></td><td><code>brew tap entireio/tap</code> → <code>brew trust entireio/tap</code>（新 brew 需要，否则报 untrusted tap）→ <code>brew install --cask entire</code>，然后 <code>entire enable --agent claude-code</code>（详见 06 章节）</td></tr>
+      <tr><td>飞书 webhook</td><td>PR/MR 合并通知</td><td><span class="pill p-blue">可选</span></td><td>飞书群 → 设置 → 群机器人 → 添加自定义机器人，把 webhook 存为 GitHub secret（GitLab 用 CI/CD variable）<code>FEISHU_WEBHOOK</code>；不用飞书则改写 <code>.github/workflows/pr-notify-feishu.yml</code>（GitLab 对应 CI 配置）</td></tr>
+    </table>
+    <div class="tip">流水线 skill 头部有依赖清单注释，安装命令与替换方案均已列明。任意"建议"依赖缺失时流水线不会中断，会自动降级或提示你补装。</div>
+
+    <h3 id="sec-deps-browser"><span class="pill p-blue">09.02</span>agent-browser 详解：浏览器测试工具</h3>
+    <p><strong>一句话</strong>：让 AI agent 能像真人一样操作真实浏览器做端到端测试（Vercel Labs 出品、Playwright 驱动的工具）。流水线里的 <code>test-browser</code> 步骤就靠它完成"前端功能验证 + 截图录屏留证"。</p>
+    <ul>
+      <li><strong>起什么作用</strong>：开真实 Chromium（无头或 <code>--headed</code> 可视），agent 驱动它打开页面、点击、填表、翻页，实测功能是否可用——而非只读代码"猜"行为。测试结果（截图/录屏）存进 <code>docs/solutions</code> 形成验收证据链，也是 PR 的可视化说明。</li>
+      <li><strong>怎么调用（两种方式，二选一或并用）</strong>：
+        <p><strong>① 命令行直接驱动</strong>——流水线（test-browser 步骤）的默认方式，agent 直接在 Shell 里执行它：</p>
+        <pre><code>agent-browser --headed open "http://localhost:3001"          <span class="cm"># 打开被测页面</span>
+agent-browser --headed screenshot "…/01-initial-state.png"   <span class="cm"># 操作前留证</span>
+agent-browser --headed click "text=加入购物车"                  <span class="cm"># 执行真实点击</span>
+agent-browser --headed record start "…/recording.webm"        <span class="cm"># 全程录屏</span>
+agent-browser --headed record stop</code></pre>
+        <p><strong>② MCP Server 暴露成工具</strong>——agent-browser 内置 <code>agent-browser mcp</code> 命令，启动一个 stdio 的 MCP Server，把 open/click/snapshot 等封装成标准 MCP 工具，任何支持 MCP 的客户端都能在对话里直接"调用工具"（常见于 Codex/Kiro/Cursor/Cline 等非 Claude Code 工具）。默认暴露 <code>core</code> 工具集（导航/交互/截图/读取），可用 <code>--tools all</code> 开全部。</p>
+      </li>
+      <li><strong>什么时候缺它不可</strong>：前端/全栈变更必须过浏览器实测；仅改后端时流水线会自动降级为 <code>curl</code> API 验证，不强制依赖它。</li>
+    </ul>
+
+    <h3 id="sec-deps-mcp"><span class="pill p-blue">09.03</span>agent-browser MCP 接入配置</h3>
+    <p>流水线已在 Claude Code 里走命令行方式，无需配置。若你的团队也用 <strong>Codex / Kiro / Cursor / Cline</strong> 等工具做浏览器测试，按各自约定把 MCP Server 注册进去即可（共用同一套命令）：</p>
+    <table>
+      <tr><th>客户端</th><th>配置文件</th><th>配置示例</th></tr>
+      <tr><td>Claude Code</td><td><code>.claude/mcp.json</code>（或 <code>claude mcp add</code>）</td><td><code>{ "mcpServers": { "agent-browser": { "command": "agent-browser", "args": ["mcp"] } } }</code></td></tr>
+      <tr><td>Codex（OpenAI）</td><td><code>.codex/config.toml</code>（或 <code>codex mcp add agent-browser -- agent-browser mcp</code>）</td><td><code>[mcp_servers.agent-browser]\ncommand = "agent-browser"\nargs = ["mcp"]</code></td></tr>
+      <tr><td>Kiro</td><td><code>.kiro/settings/mcp.json</code></td><td><code>{ "mcpServers": { "agent-browser": { "command": "agent-browser", "args": ["mcp"] } } }</code></td></tr>
+      <tr><td>Cursor</td><td><code>.cursor/mcp.json</code></td><td>同 Claude Code 的 JSON（<code>mcpServers</code> 键）</td></tr>
+      <tr><td>Cline（VSCode 插件）</td><td><code>cline_mcp_settings.json</code></td><td><code>{ "mcpServers": { "agent-browser": { "type": "stdio", "command": "agent-browser", "args": ["mcp"] } } }</code></td></tr>
+    </table>
+    <p class="tip">要点：所有客户端注册的都是同一套 <code>command: "agent-browser", args: ["mcp"]</code>，只是配置文件位置/格式不同。想开全部工具把 args 改为 <code>["mcp", "--tools", "all"]</code>。任何 MCP 客户端（Claude Desktop、Gemini CLI、VS Code 等）同理，按自己的 MCP 配置入口粘贴即可。</p>
+
+    <h3 id="sec-deps-sandbox"><span class="pill p-blue">09.04</span>OS 级沙箱兜底：完全放权也不怕 <code>rm -rf</code></h3>
+    <p><strong>解决什么问题</strong>：agent 频繁弹确认打破自动化 vs 全部授权（<code>--dangerously-skip-permissions</code>）太危险——两者的矛盾。业界共识是<b>权限放给 agent，安全交给 OS</b>：确认环节从"事中"移到"事前约束 + 内核兜底"。</p>
+    <ul>
+      <li><strong>原理（两层隔离）</strong>：权限规则（<code>--dangerously-skip-permissions</code> 只绕过这层，决定"是否先问你"）与 <strong>OS 沙箱</strong>（内核强制，决定"命令实际能不能碰"，谁也绕不过）是两层。沙箱开着时，即使 agent 毫无犹豫执行 <code>rm -rf /</code>，内核也会拒绝它删工作目录以外的文件。</li>
+      <li><strong>Claude Code 内建</strong>：会话里输 <code>/sandbox</code> 开启，macOS 用 Apple Seatbelt（内核级强制访问控制，Chromium/VS Code 同款），零安装零依赖；Linux/WSL2 用 bubblewrap。开启后沙箱内 Bash 命令自动放行（auto-allow），确认弹窗实测下降 84%。</li>
+      <li><strong>Codex / Kiro</strong>：Codex 默认就带 OS 沙箱（sandbox-first），<code>codex exec --sandbox workspace-write --ask-for-approval never</code>；Kiro 基于 Claude Code 内核，同样支持 <code>/sandbox</code>。</li>
+    </ul>
+    <p><strong>开箱即用配置</strong>（<code>.claude/settings.sandbox.json.example</code>）：</p>
+    <pre><code><span class="cm"># 复制为 settings.json（或 settings.local.json，仅本项目生效）</span>
+cp .claude/settings.sandbox.json.example .claude/settings.json
+<span class="cm"># 效果：沙箱内命令全自动不打断；写操作锁死在工作目录；</span>
+<span class="cm">#      ~/.ssh、~/.aws 等敏感路径禁止读写；网络只通白名单域名</span></code></pre>
+    <p>配置要点：</p>
+    <ul>
+      <li><code>autoAllowBashIfSandboxed: true</code> — 沙箱内命令免确认（完全放权的来源）</li>
+      <li><code>allowUnsandboxedCommands: false</code> — 关掉逃生门：任何命令不允许跑出沙箱，杜绝"沙箱外裸奔"</li>
+      <li><code>network.allowedDomains</code> — Bash 命令能访问的域名白名单（npm/github/maven 等），其余请求内核直接拒绝；本地 dev server 需 <code>allowLocalBinding: true</code></li>
+      <li><code>permissions.deny</code> — 兜底敏感路径保护（SSH 私钥、云凭据、shell 配置），Read/Edit 双重封死</li>
+    </ul>
+    <p class="tip">底线：<code>--dangerously-skip-permissions</code> 只应在隔离环境（CI 容器 / dev container / VM）里与沙箱配合使用；本地开发用 <code>/sandbox</code> + 上面这份配置即可实现"完全放权 + 电脑安全"。</p>
+
+    <h3 id="sec-deps-isolation"><span class="pill p-blue">09.05</span>mac 上的隔离方案选型：VM / Docker / 云端怎么选</h3>
+    <p><strong>根本差异</strong>：mac 上没有原生容器支持——所有容器方案都必须先起一个 Linux VM，容器再跑在 VM 里。这决定了各种方案在 mac 上的优劣分布：</p>
+    <table>
+      <tr><th>方案</th><th>mac 上的实现</th><th>隔离强度</th><th>主要劣势</th></tr>
+      <tr><td>Docker Desktop</td><td>先起 Linux VM 再跑容器</td><td>中（共享内核）</td><td>系统调用穿透 VM，IO 比 Linux 原生慢 30-50%；文件同步跨 VM 边界（inotify 失效，前端 HMR 常不触发）；VM 常驻 2-4GB 内存；node_modules 不能跨边界挂载</td></tr>
+      <tr><td>OrbStack</td><td>轻量 Linux VM + 容器</td><td>中</td><td>比 Docker Desktop 快，但文件映射仍是跨 VM 边界，同样的同步损耗</td></tr>
+      <tr><td>Podman</td><td>同样要起 VM</td><td>中</td><td>mac 上工具链不成熟、周边生态少</td></tr>
+      <tr><td>UTM / QEMU</td><td>完整虚拟机</td><td>高（整机隔离）</td><td>无 GPU 直通，前端构建/浏览器测试慢；共享文件夹性能差，git 跨 VM 易出权限/换行符问题；VM 常驻 4-8GB 内存；启动慢，交互割裂</td></tr>
+      <tr><td>Parallels / VMware</td><td>完整虚拟机</td><td>高</td><td>收费（Parallels 按年订阅）；同样吃内存；自动化配置比开源方案繁琐</td></tr>
+      <tr><td>Vercel Sandbox / Claude Code on the web</td><td>云端 microVM / 托管 VM</td><td>最高（物理隔离，本地零污染）</td><td>依赖网络，断网即中断；按 token/时长计费，高频不便宜；代码上传第三方，机密项目不适合；本地调试（dev server 回连）复杂</td></tr>
+      <tr><td><code>/sandbox</code> + Seatbelt（Claude Code 内建）</td><td>内核级，无需 VM</td><td>中（进程级）</td><td>默认只拦 Bash 及子进程，不拦 MCP/hooks（需 <code>@anthropic-ai/sandbox-runtime</code> 才能全进程包裹）；macOS 限定（Linux 用 bubblewrap）</td></tr>
+    </table>
+    <p><strong>针对本项目场景（mac + 交互式本地开发 + 无人值守）的最务实组合</strong>：</p>
+    <ul>
+      <li><strong>本地日常（人在）</strong>：<code>/sandbox</code> + Seatbelt——零开销，白名单外一切被内核拦截，确认弹窗大幅减少，写操作锁死工作目录。</li>
+      <li><strong>无人值守（CI）</strong>：GitHub Actions 的 ubuntu runner——runner 本来就是一次性隔离环境，比在本地 mac 上再套 Docker/VM 省心得多，且零额外成本。</li>
+    </ul>
+    <p class="warn">为什么不建议在 mac 上把 agent 关进 Docker/VM：为"隔离"付出 30-50% IO 损耗 + 文件同步坑 + 常驻内存，而 CI runner 天然就是隔离环境。mac 上的 Docker 适合跑<strong>基础设施中间件</strong>（本模板的 PostgreSQL/Redis/ES/MinIO 就是这么用的），而不是把 agent 关进去。完整对比见上方表格。</p>
+  </div>
+</section>
+
+<section id="sec-faq">
+  <h2><span class="num">10</span>常见问题</h2>
+  <div class="card">
+    <table>
+      <tr><th>问题</th><th>答案</th></tr>
+      <tr><td>流程没被触发，直接开始写代码？</td><td>确认 <code>custom-claude-template-dev-workflow/SKILL.md</code> 的 description 里写了触发词（"开发/实现/新增/修复…"），skill 放对目录，并且把工程加入 Claude Code（claude 在工程目录启动）。</td></tr>
+      <tr><td>测试要用浏览器但环境没有 agent-browser？</td><td>用 Playwright 等替代，或把步骤 3 改为纯 API 断言。核心是"测试→失败→修复→重测"的闭环，工具可换。</td></tr>
+      <tr><td>不想用 OpenSpec / 文档驱动？</td><td>可跳过 opsx + openspec，只保留两条流水线 skill 并删掉 propose/archive 步骤，退回"提示词驱动的半自动流程"。</td></tr>
+      <tr><td>PR 里截图为什么走 GitHub Release？</td><td>test-results/ 被 .gitignore 忽略不能提交，用临时 Release 托管的下载 URL 才能嵌入 PR body。合并后记得清理临时 release。</td></tr>
+      <tr><td>想定制质量门禁的标准？</td><td>改 <code>doc-verify/references/agent-prompts.md</code>（Agent 职责与 severity 定义）和 <code>custom-claude-template-prod-workflow/SKILL.md</code>（闭环轮数/兜底策略）。</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="sec-install">
+  <h2><span class="num">11</span>（可选）一键拷贝脚本</h2>
+  <div class="card">
+    <p>把下面脚本存成 <code>install.sh</code> 放到你的新工程根目录执行，自动完成步骤 2（拷贝通用部分）：</p>
+    <pre><code><span class="cm">#!/usr/bin/env bash</span>
+<span class="cm"># 用法：cd 你的新工程 && bash /path/to/template/install.sh</span>
+set -e
+TPL="$(cd "$(dirname "$0")" && pwd)"     <span class="cm"># 模板根目录</span>
+
+mkdir -p .claude/commands .claude/skills .github/prompts .github/skills .github/workflows openspec/changes/archive openspec/specs
+
+cp -r "$TPL"/.claude/commands/opsx       .claude/commands/
+cp -r "$TPL"/.claude/skills/openspec-*   .claude/skills/
+cp -r "$TPL"/.claude/skills/doc-verify    .claude/skills/
+cp -r "$TPL"/.claude/skills/custom-claude-template-dev-workflow .claude/skills/
+cp -r "$TPL"/.claude/skills/custom-claude-template-prod-workflow .claude/skills/
+cp "$TPL"/.claude/settings.json           .claude/
+cp -r "$TPL"/.github/prompts/*.md         .github/prompts/
+cp -r "$TPL"/.github/skills/openspec-*    .github/skills/
+cp -r "$TPL"/.github/workflows/*.yml      .github/workflows/
+cp "$TPL"/openspec/config.yaml            openspec/
+
+<span class="cm"># 需要手动改的，给出提示</span>
+echo "已拷贝通用部分 ✓"
+echo "接下来手动处理（文件内都有 ⚠️【模板适配】注释）："
+echo "  1. cp template/CLAUDE.md.example ./CLAUDE.md  → 替换 {{XXX}}"
+echo "  2. 需要 hooks 遥测？→ cp template/.claude/settings.json.example .claude/settings.json（已是完整 entire 配置，装好 entire 即可用；不需要则保持纯净版 settings.json）"
+echo "  3. 检查 custom-claude-template-dev-workflow / custom-claude-template-prod-workflow 头部的外部依赖清单"</code></pre>
+  </div>
+  <div class="tip">这份模板来自 custom-claude-template 的真实生产实践，改动任何 Skill 前，先跑一次最小 change 验证基线可用，再逐步增强。</div>
+</section>
+
+<footer>
+  template/ 使用说明 · 「把交付流程<b>写成 Skill</b>、把项目规范<b>写成 CLAUDE.md</b>、把需求<b>写成 OpenSpec</b>、把证据<b>写进 PR</b>」· 开源实践提炼的通用模板
+</footer>
+
+</div>
+</body>
+</html>
+
+<script>
+function toggleToc() {
+  document.getElementById('toc').classList.toggle('closed');
+}
+document.querySelectorAll('.toc-group.has-sub .toc-toggle').forEach(function (t) {
+  t.addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    t.closest('.toc-group').classList.toggle('collapsed');
+  });
+});
+(function () {
+  var links = document.querySelectorAll('#tocBody a');
+  var sections = [];
+  links.forEach(function (a) {
+    var s = document.querySelector(a.getAttribute('href'));
+    if (s) sections.push({ id: a.getAttribute('href').slice(1), link: a });
+  });
+  function onScroll() {
+    var pos = window.scrollY + 140;
+    var current = null;
+    sections.forEach(function (sec) {
+      var el = document.getElementById(sec.id);
+      if (el && el.offsetTop <= pos) current = sec;
+    });
+    sections.forEach(function (sec) {
+      sec.link.classList.toggle('active', sec === current);
+    });
+    if (current) {
+      var group = current.link.closest('.toc-group');
+      if (group) group.classList.remove('collapsed');
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>

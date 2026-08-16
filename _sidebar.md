@@ -10,9 +10,9 @@
   - [MCP](aaa_summary_docs/0_人工智能_云/MCP.md)
   - [工作流](aaa_summary_docs/0_人工智能_云/工作流.md)
   - Claude Code
-    - [使用笔记](aaa_summary_docs/0_人工智能_云/Claude全家桶/ClaudeCode.md)
-    - [推荐的 Agent、MCP 与 Skills](aaa_summary_docs/0_人工智能_云/Claude全家桶/推荐的agent-mcp-skills.md)
-    - [教程目录](aaa_summary_docs/0_人工智能_云/Claude全家桶/ClaudeCode教程/菜鸟教程/1.Claude_Code_教程_菜鸟教程.md)
+    - [使用笔记](eee_claude_code/Claude全家桶/ClaudeCode.md)
+    - [推荐的 Agent、MCP 与 Skills](eee_claude_code/Claude全家桶/推荐的agent-mcp-skills.md)
+    - [教程目录](eee_claude_code/Claude全家桶/ClaudeCode教程/菜鸟教程/1.Claude_Code_教程_菜鸟教程.md)
 
 - 项目与架构
   - [项目管理](aaa_summary_docs/1_项目开发管理/PM.md)
