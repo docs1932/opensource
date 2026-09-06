@@ -183,6 +183,7 @@
           <a href="#sec-deps-mcp"><span class="toc-num">09.3</span>agent-browser MCP 接入</a>
           <a href="#sec-deps-sandbox"><span class="toc-num">09.4</span>OS 沙箱兜底</a>
           <a href="#sec-deps-isolation"><span class="toc-num">09.5</span>mac 隔离方案选型</a>
+          <a href="#sec-deps-skilllock"><span class="toc-num">09.6</span>skills-lock.json</a>
         </div>
       </div>
       <div class="toc-group">
@@ -685,7 +686,7 @@ entire status                                          <span class="cm"># 验证
       <div class="sn">1</div>
       <div class="sb"><h4>安装 openspec CLI</h4>
         <pre><code><span class="cm"># 参考 https://github.com/fission-ai/openspec</span>
-npm install -g @fission-ai/openspec   <span class="cm"># 或用你系统的安装方式</span>
+npm install -g @fission-ai/openspec@latest   <span class="cm"># 或用你系统的安装方式</span>
 openspec --version</code></pre>
       </div>
     </div>
@@ -750,7 +751,7 @@ cp -r template/openspec                  你的工程/</code></pre>
     <table>
       <tr><th>依赖</th><th>用途</th><th>必需度</th><th>如何安装</th></tr>
       <tr><td>Claude Code</td><td>载体</td><td><span class="pill p-red">必须</span></td><td><code>curl -fsSL https://claude.ai/install.sh | bash</code>（或用 npm <code>npm i -g @anthropic-ai/claude-code</code>）</td></tr>
-      <tr><td>openspec CLI</td><td>spec-driven 工作流引擎</td><td><span class="pill p-red">必须</span></td><td>npm 全局安装：<code>npm install -g @openspec/cli</code>，验证 <code>openspec --version</code></td></tr>
+      <tr><td>openspec CLI</td><td>spec-driven 工作流引擎</td><td><span class="pill p-red">必须</span></td><td>npm 全局安装：<code>npm install -g @fission-ai/openspec@latest</code>，验证 <code>openspec --version</code></td></tr>
       <tr><td>gh CLI + GitHub 仓库</td><td>创建分支/PR/Release 托管截图（GitHub 用）</td><td><span class="pill p-red">必须</span>（二选一）</td><td><code>brew install gh</code>，然后 <code>gh auth login</code></td></tr>
       <tr><td>glab CLI + GitLab 仓库</td><td>创建分支/MR（Merge Request）合并/截图托管（GitLab 用，<code>gh</code> 只支持 GitHub）</td><td><span class="pill p-red">必须</span>（二选一）</td><td><code>brew install glab</code>，然后 <code>glab auth login</code>；流水线 skill 中的提交/PR 步骤按需改为 MR</td></tr>
       <tr><td>git</td><td>版本控制</td><td><span class="pill p-red">必须</span></td><td><code>brew install git</code>（macOS 自带旧版可升级）</td></tr>
@@ -829,6 +830,30 @@ cp .claude/settings.sandbox.json.example .claude/settings.json
       <li><strong>无人值守（CI）</strong>：GitHub Actions 的 ubuntu runner——runner 本来就是一次性隔离环境，比在本地 mac 上再套 Docker/VM 省心得多，且零额外成本。</li>
     </ul>
     <p class="warn">为什么不建议在 mac 上把 agent 关进 Docker/VM：为"隔离"付出 30-50% IO 损耗 + 文件同步坑 + 常驻内存，而 CI runner 天然就是隔离环境。mac 上的 Docker 适合跑<strong>基础设施中间件</strong>（本模板的 PostgreSQL/Redis/ES/MinIO 就是这么用的），而不是把 agent 关进去。完整对比见上方表格。</p>
+
+    <h3 id="sec-deps-skilllock"><span class="pill p-blue">09.06</span>skills-lock.json：skill 锁文件怎么产生、有什么用</h3>
+    <p><strong>一句话</strong>：它是 skill 生态里的 <code>package-lock.json</code>——记录项目从 GitHub 装了哪些 skill、各自来源与内容哈希，保证"换机器 / 新同事 / CI"能装回<strong>完全一致</strong>的版本。</p>
+    <p><strong>它从哪来</strong>：由 Vercel Labs 的 <code>npx skills</code> CLI 自动生成（不是手工写的）。用该工具从 GitHub 安装 skill 时，会写入/更新项目根目录的 <code>skills-lock.json</code>（全局安装则写 <code>~/.agents/.skill-lock.json</code>）：</p>
+    <pre><code><span class="cm"># ① 安装 skill（拉取 GitHub 仓库，自动写入 skills-lock.json）</span>
+npx skills add ant-design/antd-skill
+
+<span class="cm"># ② 检查更新（对比本地内容哈希 vs 上游，检测 SKILL.md 被改）</span>
+npx skills check
+
+<span class="cm"># ③ 按锁文件精确恢复（等价 npm ci——换机器/CI 只跑这一步）</span>
+npx skills experimental_install</code></pre>
+    <p>锁文件内容示例（每个 skill 一条，记录来源 + 内容哈希）：</p>
+    <pre><code>{ "version": 1, "skills": {
+    "java-springboot": { "source": "github/awesome-copilot", "sourceType": "github", "computedHash": "f1b9c6b1…" },
+    "redis-best-practices": { "source": "mindrally/skills", "sourceType": "github", "computedHash": "c362f644…" }
+} }</code></pre>
+    <p><strong>有什么用</strong>：</p>
+    <ul>
+      <li><strong>可复现</strong>——<code>experimental_install</code> 能装回一模一样的内容，团队协作和 CI 不再靠"口口相传怎么装的"。</li>
+      <li><strong>防篡改 / 可审计</strong>——<code>computedHash</code> 是全部文件的内容哈希，上游 skill 被动过（哪怕改一行）就能查出来；PR 里可直接 diff skill 变更。</li>
+      <li><strong>明确依赖</strong>——列出项目依赖了哪些第三方指令包、来自哪个仓库，供供应链审查。</li>
+    </ul>
+    <div class="tip"><strong>注意区分</strong>：Claude Code 官方 skill 系统（<code>.claude/skills/SKILL.md</code>）本身<strong>不需要</strong>锁文件——只有用 <code>npx skills</code> 这类工具管理第三方 skill 时才产生它。手动复制进 <code>.claude/skills/</code> 的 skill（如本模板的 <code>doc-verify</code>、<code>openspec-*</code>）不会出现在 lock 里。<strong>一致性要求</strong>：一旦采用 <code>npx skills</code> 管理，安装/更新就都走它（避免手工改 lock 或绕过它装 skill，否则 lock 与实际安装对不上、可复现性即失效）；<code>skills-lock.json</code> 建议提交 git 与团队共享。</div>
   </div>
 </section>
 
